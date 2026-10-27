@@ -1,0 +1,10 @@
+/* Estilos del formulario de nueva tarea */
+.task-form { display: grid; gap: 9px; padding: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+.form-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.form-row input[type='date'] { width: 150px; }
+
+/* Desktop/tablet: la fila del formulario no se envuelve */
+@media (min-width: 641px) {
+  .form-row { flex-wrap: nowrap; }
+  .form-row input[type='date'] { width: auto; }
+}

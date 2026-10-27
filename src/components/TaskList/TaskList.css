@@ -1,0 +1,3 @@
+/* Estilos de la lista de tareas y su estado vacío */
+.task-list { display: grid; gap: 9px; }
+.empty { padding: 34px; border: 1px dashed var(--border-strong); border-radius: 16px; color: var(--text-dim); text-align: center; }

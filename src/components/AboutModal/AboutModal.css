@@ -1,0 +1,16 @@
+/* Estilos del modal informativo "¿Qué es KeepUp?" */
+.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .55); animation: fade-in .2s ease both; }
+.modal { position: relative; width: min(100%, 520px); max-height: 90vh; overflow: auto; display: grid; gap: 12px; padding: 26px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); animation: modal-in .28s cubic-bezier(.2, .8, .3, 1) both; }
+.modal h2 { margin: 2px 0 0; font: 700 24px 'Space Grotesk', sans-serif; letter-spacing: -.03em; }
+.modal__close { position: absolute; top: 14px; right: 14px; border: 0; width: 30px; height: 30px; border-radius: 8px; color: var(--text-dim); background: transparent; font-size: 20px; line-height: 1; }
+.modal__close:hover { color: var(--text); background: var(--surface-2); }
+.modal__list { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: var(--text-muted); font-size: 14px; }
+.modal__list strong { color: var(--text); }
+.modal .button.primary { margin-left: 0; justify-self: start; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal, .modal-backdrop { animation: none; }
+}

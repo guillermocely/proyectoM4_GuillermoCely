@@ -1,0 +1,7 @@
+/* Estilos de nivel App: contenedor raíz y transición de apertura */
+.keepup-app { position: relative; transition: opacity .5s ease; }
+.keepup-app.is-opening { pointer-events: none; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .keepup-app { transition: none; }
+}

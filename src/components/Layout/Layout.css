@@ -1,0 +1,10 @@
+/* Marco común: barra de navegación arriba y contenido ocupando el resto */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.layout > main {
+  flex: 1;
+}

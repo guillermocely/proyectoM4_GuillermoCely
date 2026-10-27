@@ -1,0 +1,6 @@
+/* Estilos de la barra de filtros por estado */
+.filters { display: flex; gap: 8px; margin: 22px 0 12px; flex-wrap: wrap; }
+.filter { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-strong); border-radius: 7px; padding: 7px 12px; color: var(--text-muted); background: transparent; text-transform: capitalize; }
+.filter.active { border-color: var(--accent); color: var(--accent-contrast); background: var(--accent); }
+.filter__count { font-size: 11px; padding: 1px 6px; border-radius: 20px; background: rgba(127, 127, 127, .25); }
+.filter.active .filter__count { background: rgba(0, 0, 0, .18); }

@@ -1,0 +1,58 @@
+/* Estilos de la página del gestor: contenedor, progreso y estado vacío */
+.app-shell {
+  width: min(100% - 20px, 1080px);
+  margin: 14px auto 28px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--app-panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+
+.progress-track {
+  height: 7px;
+  margin: 20px 0 24px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--track);
+}
+
+.progress-track div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width .3s;
+}
+
+.task-list {
+  display: grid;
+  gap: 9px;
+}
+
+.empty {
+  padding: 34px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* Tablet */
+@media (min-width: 641px) {
+  .app-shell {
+    width: min(100% - 40px, 880px);
+    margin: 32px auto 64px;
+    padding: 32px;
+    border-radius: 28px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .app-shell {
+    width: min(100% - 64px, 1080px);
+    padding: 40px;
+  }
+}

@@ -1,0 +1,30 @@
+.shape-waves {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--splash, #1d1d1b);
+}
+
+.shape-waves__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.shape-waves[data-ready='true'] .shape-waves__canvas {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shape-waves__canvas {
+    transition: none;
+  }
+}

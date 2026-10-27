@@ -1,0 +1,21 @@
+/* Estilos del botón de cambio de tema */
+.theme-toggle {
+  min-width: 42px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* Tema oscuro: hover con acento suave */
+.button.theme-toggle:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* Tema claro: hover neutro para no competir con el acento */
+html[data-theme='light'] .button.theme-toggle:hover {
+  border-color: var(--text-muted);
+  background: rgba(37, 35, 31, .08);
+  color: var(--text);
+}
