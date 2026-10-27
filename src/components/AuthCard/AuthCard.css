@@ -1,0 +1,73 @@
+/* Estilos compartidos de las pantallas de autenticación */
+.auth {
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.auth__card {
+  width: min(100%, 420px);
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.auth__card h1 {
+  margin: 0;
+  text-align: center;
+}
+
+.auth__form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth__field {
+  display: grid;
+  gap: 6px;
+}
+
+.auth__field label {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.auth__error {
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.auth__error--form {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.auth__actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.auth__actions .button {
+  width: 100%;
+  margin-left: 0;
+}
+
+.auth__footer {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+.auth__footer a {
+  color: var(--accent);
+}

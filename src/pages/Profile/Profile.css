@@ -1,0 +1,105 @@
+/* Estilos del perfil del usuario */
+.profile {
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.profile__card {
+  width: min(100%, 640px);
+  display: grid;
+  gap: 22px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.profile__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile__header h1 {
+  margin: 0;
+}
+
+.profile__header p {
+  word-break: break-word;
+}
+
+.profile__avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile__upload {
+  cursor: pointer;
+}
+
+.profile__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.profile__data {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.profile__data > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.profile__data dt {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.profile__data dd {
+  margin: 0;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.profile__uid {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+}
+
+.profile__links .button {
+  width: 100%;
+  margin-left: 0;
+}
+
+.profile__footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.button.profile__logout {
+  width: 100%;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.button.profile__logout:hover {
+  border-color: var(--danger);
+  background: rgba(233, 105, 81, .12);
+}
