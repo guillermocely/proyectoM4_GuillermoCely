@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Priority, Task } from '../types/task';
 import { loadStoredTasks, saveStoredTasks } from '../services/storage';
+import { addOneMonth } from '../utils/taskDate';
 
 const REMOVE_ANIMATION_MS = 280;
 const UNDO_TIMEOUT_MS = 5000;
@@ -34,15 +35,46 @@ export function useTasks() {
     return () => window.clearTimeout(timer);
   }, [deleted]);
 
-  function addTask(title: string, description: string, priority: Priority, dueDate: string) {
+  function addTask(title: string, description: string, priority: Priority, dueDate: string, repeatMonthly: boolean) {
     setTasks((current) => [
-      { id: crypto.randomUUID(), userId: 'local', title, description, priority, dueDate, completed: false, createdAt: new Date() },
+      { id: crypto.randomUUID(), userId: 'local', title, description, priority, dueDate, completed: false, createdAt: new Date(), repeatMonthly },
       ...current,
     ]);
   }
 
   function updateTask(id: string, changes: Partial<Task>) {
-    setTasks((current) => current.map((task) => (task.id === id ? { ...task, ...changes } : task)));
+    setTasks((current) => {
+      const target = current.find((task) => task.id === id);
+      if (!target) return current;
+
+      // Al completar una tarea mensual se genera la siguiente ocurrencia.
+      const completingRepeat =
+        changes.completed === true && Boolean(target.repeatMonthly) && Boolean(target.dueDate) && !target.completed;
+
+      const updated = current.map((task) => {
+        if (task.id !== id) return task;
+        const next = { ...task, ...changes };
+        // La original deja de repetir para no duplicar si se vuelve a marcar.
+        if (completingRepeat) next.repeatMonthly = false;
+        return next;
+      });
+
+      if (!completingRepeat) return updated;
+
+      const nextTask: Task = {
+        id: crypto.randomUUID(),
+        userId: target.userId,
+        title: target.title,
+        description: target.description,
+        completed: false,
+        priority: target.priority,
+        dueDate: addOneMonth(target.dueDate),
+        createdAt: new Date(),
+        repeatMonthly: true,
+      };
+
+      return [nextTask, ...updated];
+    });
   }
 
   function removeTask(id: string) {

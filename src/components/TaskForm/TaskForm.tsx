@@ -4,7 +4,13 @@ import type { Priority } from '../../types/task';
 import './TaskForm.css';
 
 interface TaskFormProps {
-  onAdd: (title: string, description: string, priority: Priority, dueDate: string) => void;
+  onAdd: (
+    title: string,
+    description: string,
+    priority: Priority,
+    dueDate: string,
+    repeatMonthly: boolean,
+  ) => void;
 }
 
 // Formulario para crear una nueva tarea.
@@ -13,14 +19,18 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('media');
   const [dueDate, setDueDate] = useState('');
+  const [repeatMonthly, setRepeatMonthly] = useState(false);
+
+  const repeatDay = dueDate ? Number(dueDate.slice(8, 10)) : null;
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!title.trim()) return;
-    onAdd(title.trim(), description.trim(), priority, dueDate);
+    onAdd(title.trim(), description.trim(), priority, dueDate, repeatMonthly && Boolean(dueDate));
     setTitle('');
     setDescription('');
     setDueDate('');
+    setRepeatMonthly(false);
   }
 
   return (
@@ -33,9 +43,27 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
           <option value="media">Media</option>
           <option value="baja">Baja</option>
         </select>
-        <input aria-label="Vencimiento" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+        <input
+          aria-label="Vencimiento"
+          type="date"
+          value={dueDate}
+          onChange={(event) => {
+            setDueDate(event.target.value);
+            if (!event.target.value) setRepeatMonthly(false);
+          }}
+        />
         <button className="button primary">Agregar</button>
       </div>
+      {repeatDay !== null && (
+        <label className="repeat-option">
+          <input
+            type="checkbox"
+            checked={repeatMonthly}
+            onChange={(event) => setRepeatMonthly(event.target.checked)}
+          />
+          <span>Repetir el día {repeatDay} de cada mes</span>
+        </label>
+      )}
     </form>
   );
 }

@@ -3,6 +3,9 @@
 .form-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .form-row input[type='date'] { width: 150px; }
 
+.repeat-option { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
+.repeat-option input { width: auto; }
+
 /* Desktop/tablet: la fila del formulario no se envuelve */
 @media (min-width: 641px) {
   .form-row { flex-wrap: nowrap; }

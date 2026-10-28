@@ -30,6 +30,7 @@ export default function TaskCard({ task, leaving, onUpdate, onRemove }: TaskCard
               {task.description && <p>{task.description}</p>}
             </>}
         {task.dueDate && <small className={overdue ? 'overdue' : ''}>{overdue ? 'Vencida' : 'Vence'} {task.dueDate}</small>}
+        {task.repeatMonthly && <small className="repeat-badge">↻ Se repite cada mes</small>}
       </div>
       <div className="card-actions">
         {editing
