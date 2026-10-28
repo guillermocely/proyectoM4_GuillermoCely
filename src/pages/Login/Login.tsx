@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
+import { toast } from 'react-toastify';
 import AuthCard from '../../components/AuthCard';
 import { useAuth } from '../../contexts';
 import { auth, googleProvider } from '../../firebase';
@@ -75,6 +76,7 @@ export default function Login() {
 
     try {
       await signInWithPopup(auth, googleProvider);
+      toast.success('¡Sesión iniciada con Google!');
     } catch (error) {
       setFormError(getAuthErrorMessage(error));
     } finally {
