@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { Priority } from '../../types/task';
+import {
+  DESCRIPTION_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
+  validateTaskInput,
+} from '../../helpers/taskValidation';
 import './TaskForm.css';
 
 interface TaskFormProps {
@@ -10,7 +15,7 @@ interface TaskFormProps {
     priority: Priority,
     dueDate: string,
     repeatMonthly: boolean,
-  ) => void;
+  ) => Promise<void>;
 }
 
 // Formulario para crear una nueva tarea.
@@ -20,23 +25,65 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
   const [priority, setPriority] = useState<Priority>('media');
   const [dueDate, setDueDate] = useState('');
   const [repeatMonthly, setRepeatMonthly] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const repeatDay = dueDate ? Number(dueDate.slice(8, 10)) : null;
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!title.trim()) return;
-    onAdd(title.trim(), description.trim(), priority, dueDate, repeatMonthly && Boolean(dueDate));
-    setTitle('');
-    setDescription('');
-    setDueDate('');
-    setRepeatMonthly(false);
+    if (submitting) return;
+
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
+    const errors = validateTaskInput({
+      title: trimmedTitle,
+      description: trimmedDescription,
+      priority,
+      dueDate,
+    });
+
+    if (errors.length > 0) {
+      setError(errors[0]);
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await onAdd(
+        trimmedTitle,
+        trimmedDescription,
+        priority,
+        dueDate,
+        repeatMonthly && Boolean(dueDate),
+      );
+      setTitle('');
+      setDescription('');
+      setDueDate('');
+      setRepeatMonthly(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo crear la tarea.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <form className="task-form" onSubmit={submit} aria-label="Nueva tarea">
-      <input placeholder="Título de la tarea…" value={title} onChange={(event) => setTitle(event.target.value)} />
-      <textarea placeholder="Descripción (opcional)" rows={2} value={description} onChange={(event) => setDescription(event.target.value)} />
+      <input
+        placeholder="Título de la tarea…"
+        value={title}
+        maxLength={TITLE_MAX_LENGTH}
+        onChange={(event) => setTitle(event.target.value)}
+      />
+      <textarea
+        placeholder="Descripción (opcional)"
+        rows={2}
+        value={description}
+        maxLength={DESCRIPTION_MAX_LENGTH}
+        onChange={(event) => setDescription(event.target.value)}
+      />
       <div className="form-row">
         <select aria-label="Prioridad" value={priority} onChange={(event) => setPriority(event.target.value as Priority)}>
           <option value="alta">Alta</option>
@@ -52,7 +99,9 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
             if (!event.target.value) setRepeatMonthly(false);
           }}
         />
-        <button className="button primary">Agregar</button>
+        <button className="button primary" disabled={submitting}>
+          {submitting ? 'Agregando…' : 'Agregar'}
+        </button>
       </div>
       {repeatDay !== null && (
         <label className="repeat-option">
@@ -64,6 +113,7 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
           <span>Repetir el día {repeatDay} de cada mes</span>
         </label>
       )}
+      {error && <p className="form-error" role="alert">{error}</p>}
     </form>
   );
 }

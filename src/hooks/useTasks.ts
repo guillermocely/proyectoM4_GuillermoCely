@@ -1,27 +1,58 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Priority, Task } from '../types/task';
-import { loadStoredTasks, saveStoredTasks } from '../services/storage';
-import { addOneMonth } from '../utils/taskDate';
+import {
+  addTask as createTask,
+  completeTask,
+  deleteTask,
+  getTasks,
+  restoreTask,
+  updateTask as saveTask,
+} from '../services/taskService';
+import { isPermissionDenied } from '../helpers/errors';
+import { validateTaskInput } from '../helpers/taskValidation';
 
 const REMOVE_ANIMATION_MS = 280;
 const UNDO_TIMEOUT_MS = 5000;
 
-// Tareas de ejemplo que se muestran la primera vez.
-const initialTasks: Task[] = [
-  { id: '1', userId: 'local', title: 'Revisar pendientes del día', description: 'Organizar las tareas más importantes antes de comenzar.', completed: false, priority: 'alta', dueDate: '', createdAt: new Date() },
-  { id: '2', userId: 'local', title: 'Preparar reunión de equipo', description: 'Reunir los puntos principales para la reunión semanal.', completed: true, priority: 'media', dueDate: '', createdAt: new Date() },
-];
+function getErrorMessage(error: unknown, fallback: string): string {
+  return isPermissionDenied(error)
+    ? 'No tenés permiso para acceder a estas tareas.'
+    : fallback;
+}
 
-export function useTasks() {
-  const [tasks, setTasks] = useState<Task[]>(() => loadStoredTasks(initialTasks));
+export function useTasks(userId: string) {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [leaving, setLeaving] = useState<string[]>([]);
   const [deleted, setDeleted] = useState<{ task: Task; index: number } | null>(null);
   const pendingRemovals = useRef<number[]>([]);
 
-  // Persiste las tareas cada vez que cambian.
+  // Carga las tareas del usuario desde Firestore.
   useEffect(() => {
-    saveStoredTasks(tasks);
-  }, [tasks]);
+    if (!userId) return;
+    let active = true;
+
+    const load = async () => {
+      try {
+        const data = await getTasks(userId);
+        if (active) {
+          setTasks(data);
+          setError(null);
+        }
+      } catch (err) {
+        console.error('Error al cargar tareas desde Firestore:', err);
+        if (active) {
+          setError(getErrorMessage(err, 'No se pudieron cargar las tareas.'));
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void load();
+    return () => { active = false; };
+  }, [userId]);
 
   // Limpia los temporizadores de borrado al desmontar.
   useEffect(() => () => {
@@ -35,74 +66,123 @@ export function useTasks() {
     return () => window.clearTimeout(timer);
   }, [deleted]);
 
-  function addTask(title: string, description: string, priority: Priority, dueDate: string, repeatMonthly: boolean) {
-    setTasks((current) => [
-      { id: crypto.randomUUID(), userId: 'local', title, description, priority, dueDate, completed: false, createdAt: new Date(), repeatMonthly },
-      ...current,
-    ]);
+  async function refresh(): Promise<void> {
+    if (!userId) return;
+    try {
+      setTasks(await getTasks(userId));
+      setError(null);
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudieron cargar las tareas.'));
+    }
   }
 
-  function updateTask(id: string, changes: Partial<Task>) {
-    setTasks((current) => {
-      const target = current.find((task) => task.id === id);
-      if (!target) return current;
+  async function addTask(
+    title: string,
+    description: string,
+    priority: Priority,
+    dueDate: string,
+    repeatMonthly: boolean,
+  ): Promise<void> {
+    const errors = validateTaskInput({ title, description, priority, dueDate });
+    if (errors.length > 0) throw new Error(errors[0]);
 
-      // Al completar una tarea mensual se genera la siguiente ocurrencia.
-      const completingRepeat =
-        changes.completed === true && Boolean(target.repeatMonthly) && Boolean(target.dueDate) && !target.completed;
-
-      const updated = current.map((task) => {
-        if (task.id !== id) return task;
-        const next = { ...task, ...changes };
-        // La original deja de repetir para no duplicar si se vuelve a marcar.
-        if (completingRepeat) next.repeatMonthly = false;
-        return next;
-      });
-
-      if (!completingRepeat) return updated;
-
-      const nextTask: Task = {
-        id: crypto.randomUUID(),
-        userId: target.userId,
-        title: target.title,
-        description: target.description,
+    try {
+      const task = await createTask({
+        userId,
+        title: title.trim(),
+        description: description.trim(),
         completed: false,
-        priority: target.priority,
-        dueDate: addOneMonth(target.dueDate),
-        createdAt: new Date(),
-        repeatMonthly: true,
-      };
+        priority,
+        dueDate,
+        createdAt: new Date().toISOString(),
+        repeatMonthly,
+      });
+      setTasks((current) => [task, ...current]);
+      setError(null);
+    } catch (err) {
+      const message = getErrorMessage(err, 'No se pudo crear la tarea.');
+      setError(message);
+      throw new Error(message, { cause: err });
+    }
+  }
 
-      return [nextTask, ...updated];
-    });
+  async function updateTask(id: string, changes: Partial<Task>): Promise<void> {
+    const target = tasks.find((task) => task.id === id);
+    if (!target) return;
+
+    try {
+      // Al completar una tarea mensual se genera la siguiente ocurrencia.
+      if (changes.completed === true && !target.completed && target.repeatMonthly && target.dueDate) {
+        const { updated, next } = await completeTask(target);
+        setTasks((current) => [
+          next,
+          ...current.map((task) => (task.id === id ? updated : task)),
+        ]);
+      } else {
+        const updated = await saveTask({ ...target, ...changes });
+        setTasks((current) => current.map((task) => (task.id === id ? updated : task)));
+      }
+      setError(null);
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudo actualizar la tarea.'));
+    }
   }
 
   function removeTask(id: string) {
     const index = tasks.findIndex((task) => task.id === id);
     const task = tasks[index];
     if (!task) return;
+
     setLeaving((current) => [...current, id]);
-    const timer = window.setTimeout(() => {
-      setTasks((current) => current.filter((item) => item.id !== id));
-      setLeaving((current) => current.filter((item) => item !== id));
-      setDeleted({ task, index });
-      pendingRemovals.current = pendingRemovals.current.filter((item) => item !== timer);
+    const timer = window.setTimeout(async () => {
+      try {
+        await deleteTask(task);
+        setTasks((current) => current.filter((item) => item.id !== id));
+        setDeleted({ task, index });
+        setError(null);
+      } catch (err) {
+        setError(getErrorMessage(err, 'No se pudo eliminar la tarea.'));
+      } finally {
+        setLeaving((current) => current.filter((item) => item !== id));
+        pendingRemovals.current = pendingRemovals.current.filter((item) => item !== timer);
+      }
     }, REMOVE_ANIMATION_MS);
+
     pendingRemovals.current.push(timer);
   }
 
-  function undoRemove() {
+  async function undoRemove(): Promise<void> {
     if (!deleted) return;
-    setTasks((current) => {
-      const next = [...current];
-      next.splice(Math.min(deleted.index, next.length), 0, deleted.task);
-      return next;
-    });
-    setDeleted(null);
+
+    try {
+      await restoreTask(deleted.task);
+      setTasks((current) => {
+        const next = [...current];
+        next.splice(Math.min(deleted.index, next.length), 0, deleted.task);
+        return next;
+      });
+      setDeleted(null);
+      setError(null);
+    } catch (err) {
+      setError(getErrorMessage(err, 'No se pudo restaurar la tarea.'));
+    }
   }
 
   const completed = tasks.filter((task) => task.completed).length;
   const progress = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
 
-  return { tasks, completed, progress, leaving, deleted, addTask, updateTask, removeTask, undoRemove };
+  return {
+    tasks,
+    completed,
+    progress,
+    loading,
+    error,
+    leaving,
+    deleted,
+    addTask,
+    updateTask,
+    removeTask,
+    undoRemove,
+    refresh,
+  };
 }

@@ -22,3 +22,7 @@ export const getAuthErrorMessage = (error: unknown): string => {
   }
   return DEFAULT_MESSAGE;
 };
+
+// True si Firestore rechazó la operación por falta de permisos.
+export const isPermissionDenied = (error: unknown): boolean =>
+  error instanceof FirebaseError && error.code === 'permission-denied';

@@ -17,6 +17,11 @@ dist-ssr
 .env.*
 !.env.example
 
+# Firebase CLI / credenciales de administrador
+.firebase/
+firebase-debug.log
+service-account*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

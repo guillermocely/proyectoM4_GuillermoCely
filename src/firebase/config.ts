@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Configuración de Firebase tomada de las variables de entorno (.env).
 const firebaseConfig = {
@@ -17,3 +18,5 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 // Proveedor para iniciar sesión con Google.
 export const googleProvider = new GoogleAuthProvider();
+// Base de datos Cloud Firestore.
+export const db = getFirestore(app);

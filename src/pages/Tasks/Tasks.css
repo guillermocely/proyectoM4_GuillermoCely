@@ -39,6 +39,10 @@
   text-align: center;
 }
 
+.tasks-status { padding: 40px 0; color: var(--text-muted); text-align: center; }
+.tasks-error { color: var(--danger); font-size: 14px; }
+.tasks-status.tasks-error { padding: 40px 0; }
+
 /* Tablet */
 @media (min-width: 641px) {
   .app-shell {

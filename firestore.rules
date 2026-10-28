@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Deniega todo por defecto.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /tasks/{taskId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwnerExisting() {
+        return isSignedIn() && request.auth.uid == resource.data.userId;
+      }
+
+      function isOwnerIncoming() {
+        return isSignedIn() && request.auth.uid == request.resource.data.userId;
+      }
+
+      function hasValidShape(data) {
+        return data.keys().hasAll([
+            'title', 'description', 'priority', 'dueDate',
+            'completed', 'repeatMonthly', 'userId', 'createdAt'
+          ])
+          && data.title is string
+          && data.title.size() > 0
+          && data.title.size() <= 200
+          && data.description is string
+          && data.description.size() <= 5000
+          && data.priority in ['alta', 'media', 'baja']
+          && data.dueDate is string
+          && data.dueDate.matches('^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && data.completed is bool
+          && data.repeatMonthly is bool
+          && data.userId is string
+          && data.createdAt is string;
+      }
+
+      // Lectura solo para el dueño.
+      allow get, list: if isOwnerExisting();
+
+      // Creación: el userId propuesto debe ser el del usuario autenticado.
+      allow create: if isOwnerIncoming() && hasValidShape(request.resource.data);
+
+      // Update: solo el dueño, sin cambiar propietario ni fecha de creación.
+      allow update: if isOwnerExisting()
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && hasValidShape(request.resource.data);
+
+      // Delete: solo el dueño.
+      allow delete: if isOwnerExisting();
+    }
+  }
+}
