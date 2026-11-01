@@ -1,5 +1,7 @@
 # KeepUp
 
+🚀 **[Ver demo en vivo → proyecto-m4-guillermo-cely.vercel.app](https://proyecto-m4-guillermo-cely.vercel.app/)**
+
 KeepUp es una app de tareas personales con autenticación, perfil con avatar, prioridades, fechas límite y tareas mensuales recurrentes. Cada usuario ve y modifica únicamente sus propias tareas, guardadas en Cloud Firestore. También incluye una mascota personalizable con chat de Gemini y un formulario de contacto que envía correos con Amazon SES.
 
 **Tecnologías**
