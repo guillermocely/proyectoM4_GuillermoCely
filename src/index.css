@@ -17,6 +17,11 @@
   --accent-hover: #ffd977;
   --accent-soft: rgba(247, 202, 82, .12);
   --accent-soft-hover: rgba(247, 202, 82, .2);
+  --mascot-ambar: #f7ca52;
+  --mascot-coral: #e98b72;
+  --mascot-menta: #7ed7b0;
+  --mascot-celeste: #7fb9e8;
+  --mascot-lila: #b79be8;
   --danger: #e96951;
   --track: #363532;
   --panel: rgba(41, 41, 39, .97);
@@ -44,6 +49,11 @@ html[data-theme='light'] {
   --accent-hover: #c4880c;
   --accent-soft: rgba(217, 155, 18, .12);
   --accent-soft-hover: rgba(217, 155, 18, .2);
+  --mascot-ambar: #d99b12;
+  --mascot-coral: #d96f55;
+  --mascot-menta: #4fb88c;
+  --mascot-celeste: #4b90c9;
+  --mascot-lila: #8f74c9;
   --danger: #cf4b34;
   --track: #e4dfd3;
   --panel: rgba(255, 255, 255, .98);

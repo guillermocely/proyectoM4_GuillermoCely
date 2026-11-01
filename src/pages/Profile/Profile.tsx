@@ -1,8 +1,10 @@
 import { useState, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import MascotProfile from '../../components/MascotProfile';
 import UserAvatar from '../../components/UserAvatar';
 import { useAuth } from '../../contexts';
 import { useAvatar } from '../../hooks/useAvatar';
+import { useMascotSettings } from '../../hooks/useMascotSettings';
 import './Profile.css';
 
 const PROVIDER_LABELS: Record<string, string> = {
@@ -24,6 +26,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { avatar, updateAvatar, resetAvatar } = useAvatar(user?.uid);
+  const mascot = useMascotSettings(user?.uid);
   const [error, setError] = useState<string | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
 
@@ -53,62 +56,71 @@ export default function Profile() {
 
   return (
     <main className="profile">
-      <section className="profile__card">
-        <header className="profile__header">
-          <UserAvatar uid={user.uid} email={user.email} size="lg" />
-          <div>
-            <h1>{user.displayName || 'Mi perfil'}</h1>
-            <p>{user.email}</p>
-          </div>
-        </header>
+      <div className="profile__content">
+        <section className="profile__card">
+          <header className="profile__header">
+            <UserAvatar uid={user.uid} email={user.email} size="lg" />
+            <div>
+              <h1>{user.displayName || 'Mi perfil'}</h1>
+              <p>{user.email}</p>
+            </div>
+          </header>
 
-        <div className="profile__avatar-actions">
-          <label className="button secondary profile__upload">
-            Cambiar foto
-            <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
-          </label>
-          {avatar && (
-            <button className="button ghost" type="button" onClick={resetAvatar}>
-              Quitar foto
+          <div className="profile__avatar-actions">
+            <label className="button secondary profile__upload">
+              Cambiar foto
+              <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
+            </label>
+            {avatar && (
+              <button className="button ghost" type="button" onClick={resetAvatar}>
+                Quitar foto
+              </button>
+            )}
+          </div>
+          {error && <p className="profile__error">{error}</p>}
+
+          <dl className="profile__data">
+            <div>
+              <dt>Email</dt>
+              <dd>{user.email}</dd>
+            </div>
+            <div>
+              <dt>Método de acceso</dt>
+              <dd>{providerLabel}</dd>
+            </div>
+            <div>
+              <dt>Miembro desde</dt>
+              <dd>{formatDate(user.metadata.creationTime)}</dd>
+            </div>
+            <div>
+              <dt>ID de usuario</dt>
+              <dd className="profile__uid">{user.uid}</dd>
+            </div>
+          </dl>
+
+          <div className="profile__links">
+            <Link className="button primary" to="/tareas">Ir a mis tareas</Link>
+          </div>
+
+          <footer className="profile__footer">
+            <button
+              className="button secondary profile__logout"
+              type="button"
+              onClick={handleLogout}
+              disabled={isLeaving}
+            >
+              {isLeaving ? 'Cerrando sesión...' : 'Cerrar sesión'}
             </button>
-          )}
-        </div>
-        {error && <p className="profile__error">{error}</p>}
+          </footer>
+        </section>
 
-        <dl className="profile__data">
-          <div>
-            <dt>Email</dt>
-            <dd>{user.email}</dd>
-          </div>
-          <div>
-            <dt>Método de acceso</dt>
-            <dd>{providerLabel}</dd>
-          </div>
-          <div>
-            <dt>Miembro desde</dt>
-            <dd>{formatDate(user.metadata.creationTime)}</dd>
-          </div>
-          <div>
-            <dt>ID de usuario</dt>
-            <dd className="profile__uid">{user.uid}</dd>
-          </div>
-        </dl>
-
-        <div className="profile__links">
-          <Link className="button primary" to="/tareas">Ir a mis tareas</Link>
-        </div>
-
-        <footer className="profile__footer">
-          <button
-            className="button secondary profile__logout"
-            type="button"
-            onClick={handleLogout}
-            disabled={isLeaving}
-          >
-            {isLeaving ? 'Cerrando sesión...' : 'Cerrar sesión'}
-          </button>
-        </footer>
-      </section>
+        <MascotProfile
+          settings={mascot.settings}
+          loading={!mascot.ready}
+          error={mascot.error}
+          onSave={mascot.save}
+        />
+      </div>
     </main>
   );
 }

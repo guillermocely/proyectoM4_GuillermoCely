@@ -1,0 +1,166 @@
+import { useState } from 'react';
+import MascotFigure from '../MascotFigure';
+import {
+  MASCOT_COLORS,
+  MASCOT_KINDS,
+  MASCOT_PERSONALITIES,
+  MASCOT_TEMPERATURE_MAX,
+  MASCOT_TEMPERATURE_MIN,
+  MASCOT_TOKENS_MAX,
+  MASCOT_TOKENS_MIN,
+  type MascotSettings,
+} from '../../types/mascot';
+import type { MascotProfileProps } from './MascotProfile.types';
+import './MascotProfile.css';
+
+export default function MascotProfile({
+  settings,
+  loading = false,
+  error = null,
+  onSave,
+}: MascotProfileProps) {
+  const [draftOverride, setDraftOverride] = useState<MascotSettings | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const draft = draftOverride ?? settings;
+
+  function update(changes: Partial<MascotSettings>) {
+    setDraftOverride({ ...draft, ...changes });
+    setSaved(false);
+  }
+
+  async function handleSave() {
+    setBusy(true);
+    const ok = await onSave(draft);
+    if (ok) setDraftOverride(null);
+    setBusy(false);
+    setSaved(ok);
+  }
+
+  return (
+    <section className="mascot-profile" aria-labelledby="mascot-profile-title">
+      <header className="mascot-profile__header">
+        <div className="mascot-profile__preview">
+          <MascotFigure kind={draft.kind} color={draft.color} />
+        </div>
+        <div>
+          <p className="mascot-profile__eyebrow">Tu compañera de tareas</p>
+          <h2 id="mascot-profile-title">Mi mascota</h2>
+          <p>Elegí cómo se ve y cómo te acompaña en KeepUp.</p>
+        </div>
+      </header>
+
+      {loading ? (
+        <p className="mascot-profile__status" role="status">Cargando tu mascota...</p>
+      ) : (
+        <>
+          {error && <p className="mascot-profile__error" role="alert">{error}</p>}
+
+          <fieldset className="mascot-profile__fieldset">
+            <legend>Mascota</legend>
+            <div className="mascot-profile__chips">
+              {MASCOT_KINDS.map((option) => (
+                <button
+                  key={option.value}
+                  className={`mascot-profile__chip${draft.kind === option.value ? ' is-selected' : ''}`}
+                  type="button"
+                  aria-pressed={draft.kind === option.value}
+                  onClick={() => update({ kind: option.value })}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <label className="mascot-profile__name">
+            <span>Nombre</span>
+            <input
+              maxLength={20}
+              value={draft.name}
+              onChange={(event) => update({ name: event.target.value })}
+            />
+          </label>
+
+          <fieldset className="mascot-profile__fieldset">
+            <legend>Color</legend>
+            <div className="mascot-profile__colors">
+              {MASCOT_COLORS.map((option) => (
+                <button
+                  key={option.value}
+                  className={`mascot-profile__color${draft.color === option.value ? ' is-selected' : ''}`}
+                  type="button"
+                  aria-label={option.label}
+                  aria-pressed={draft.color === option.value}
+                  title={option.label}
+                  style={{ background: `var(--mascot-${option.value})` }}
+                  onClick={() => update({ color: option.value })}
+                />
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="mascot-profile__fieldset">
+            <legend>Personalidad</legend>
+            <div className="mascot-profile__chips">
+              {MASCOT_PERSONALITIES.map((option) => (
+                <button
+                  key={option.value}
+                  className={`mascot-profile__chip${draft.personality === option.value ? ' is-selected' : ''}`}
+                  type="button"
+                  aria-pressed={draft.personality === option.value}
+                  onClick={() => update({ personality: option.value })}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <details className="mascot-profile__advanced">
+            <summary>Ajustes de inteligencia artificial</summary>
+            <p className="mascot-profile__hint">
+              La mascota responde en español, con voseo y en un máximo de 30 palabras.
+            </p>
+
+            <label className="mascot-profile__range">
+              <span>Creatividad <output>{draft.temperature.toFixed(1)}</output></span>
+              <input
+                type="range"
+                min={MASCOT_TEMPERATURE_MIN}
+                max={MASCOT_TEMPERATURE_MAX}
+                step={0.1}
+                value={draft.temperature}
+                onChange={(event) => update({ temperature: Number(event.target.value) })}
+              />
+            </label>
+
+            <label className="mascot-profile__range">
+              <span>Límite de tokens <output>{draft.maxTokens}</output></span>
+              <input
+                type="range"
+                min={MASCOT_TOKENS_MIN}
+                max={MASCOT_TOKENS_MAX}
+                step={64}
+                value={draft.maxTokens}
+                onChange={(event) => update({ maxTokens: Number(event.target.value) })}
+              />
+            </label>
+          </details>
+
+          <div className="mascot-profile__actions">
+            <button
+              className="button primary mascot-profile__save"
+              type="button"
+              onClick={handleSave}
+              disabled={busy}
+            >
+              {busy ? 'Guardando...' : 'Guardar mascota'}
+            </button>
+            {saved && <span className="mascot-profile__saved" role="status">Guardado</span>}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}

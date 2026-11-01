@@ -1,0 +1,42 @@
+.mascot-figure {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: bottom center;
+  animation: mascot-bob 2.8s ease-in-out infinite;
+}
+
+.mascot-figure__eyes {
+  transform-origin: 50px 46px;
+  animation: mascot-blink 4.5s infinite;
+}
+
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
+@keyframes mascot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-figure,
+  .mascot-figure__eyes {
+    animation: none;
+  }
+}

@@ -60,3 +60,10 @@
     padding: 40px;
   }
 }
+
+/* Deja aire para que la mascota flotante no tape el final de la lista. */
+@media (max-width: 640px) {
+  .app-shell {
+    padding-bottom: 112px;
+  }
+}

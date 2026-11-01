@@ -1,6 +1,6 @@
 # KeepUp
 
-KeepUp es una app de tareas personales con autenticación, perfil con avatar, prioridades, fechas límite y tareas mensuales recurrentes. Cada usuario ve y modifica únicamente sus propias tareas, guardadas en Cloud Firestore. También incluye un formulario de contacto que envía correos con Amazon SES.
+KeepUp es una app de tareas personales con autenticación, perfil con avatar, prioridades, fechas límite y tareas mensuales recurrentes. Cada usuario ve y modifica únicamente sus propias tareas, guardadas en Cloud Firestore. También incluye una mascota personalizable con chat de Gemini y un formulario de contacto que envía correos con Amazon SES.
 
 **Tecnologías**
 
@@ -9,8 +9,9 @@ KeepUp es una app de tareas personales con autenticación, perfil con avatar, pr
 - Cloud Firestore
 - React Router
 - React Toastify
+- Google Gemini (chat de la mascota)
 - AWS IAM + Amazon SES (formulario de contacto)
-- Vercel (serverless function)
+- Vercel (serverless functions)
 - vgpu / WebGPU (fondo animado)
 - VS Code, Git, npm, OpenCode y Firebase Console
 
@@ -258,6 +259,52 @@ service cloud.firestore {
 </details>
 
 <details>
+<summary>Configurar Mi mascota y Gemini</summary>
+
+La personalización de la mascota está en `/perfil`, como una sección adicional que no modifica los datos de la cuenta. El chat flotante aparece en `/tareas`.
+
+1. Publicar las reglas de Firestore:
+
+- Copiá el contenido actualizado de `firestore.rules` en **Firestore Database → Rules**.
+- Las preferencias se guardan en `users/{uid}/mascot/settings` y el historial en `users/{uid}/mascotMessages/{messageId}`.
+- Solo el usuario dueño puede leer y escribir sus propios documentos.
+
+2. Configurar las variables del servidor:
+
+```env
+GEMINI_API_KEY=tu_gemini_api_key
+GEMINI_MODEL=gemini-3.5-flash-lite
+FIREBASE_API_KEY=tu_api_key_web_de_firebase
+```
+
+- `GEMINI_API_KEY` se obtiene en [Google AI Studio](https://aistudio.google.com/app/apikey) y nunca debe llevar el prefijo `VITE_`.
+- `GEMINI_MODEL` es opcional. El servidor consulta los modelos disponibles y usa el indicado si admite `generateContent`; si no, elige un modelo Flash disponible.
+- `FIREBASE_API_KEY` es la misma API key web de Firebase. Se usa solo en el servidor para verificar el ID token del usuario antes de llamar a Gemini.
+- Cargalas en **Vercel → Settings → Environment Variables** para **Production** y **Development**.
+
+3. Probar en local:
+
+```bash
+vercel link
+npm run dev:vercel
+```
+
+- `npm run dev` solo ejecuta Vite y no expone `/api/mascot`.
+- Abrí `/perfil`, personalizá la mascota y guardá.
+- Abrí `/tareas`, tocá la mascota y enviá una pregunta.
+
+4. Seguridad y comportamiento:
+
+- El navegador nunca recibe `GEMINI_API_KEY`.
+- `api/mascot.ts` valida el método, el tamaño de los mensajes, la temperatura y el límite de tokens.
+- Antes de generar la respuesta verifica el ID token de Firebase con Identity Toolkit.
+- El modelo se valida contra la lista de modelos disponibles de Gemini.
+- Las respuestas son completas, en español rioplatense y de un máximo de 30 palabras.
+- El historial y las preferencias son privados por usuario mediante las reglas de Firestore.
+
+</details>
+
+<details>
 <summary>☁️ Configurar Amazon SES (formulario de contacto)</summary>
 
 El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Vercel usa Amazon SES; el navegador nunca recibe las claves de AWS.
@@ -339,17 +386,18 @@ npm run dev:vercel
 
 ```txt
 api/
-└── send-email.ts  Función serverless que envía correos con SES
+├── send-email.ts  Función serverless que envía correos con SES
+└── mascot.ts      Función serverless que valida la sesión y consulta Gemini
 
 src/
-├── components/   Componentes reutilizables (TaskCard, Navbar, ContactForm...)
+├── components/   Componentes reutilizables (TaskCard, Navbar, Mascot...)
 ├── contexts/     Sesión de Firebase (AuthProvider)
 ├── firebase/     Configuración de app, auth y Firestore
 ├── helpers/      Validaciones y mensajes de error
-├── hooks/        useTasks, useTaskFilters, useTheme, useAvatar
+├── hooks/        useTasks, useTaskFilters, useTheme, useAvatar, useMascotSettings
 ├── pages/        Landing, Contact, Login, Register, Tasks, Profile
 ├── routes/       Rutas de React Router
-├── services/     Firestore, migración de tareas y avatar
+├── services/     Firestore, migración de tareas, avatar y mascota
 ├── types/        Tipos TypeScript
 ├── utils/        Fechas, orden e imágenes
 ├── App.tsx       Composición general
@@ -359,10 +407,11 @@ src/
 Archivos importantes en la raíz:
 
 - `api/send-email.ts`: backend del formulario de contacto con AWS SES.
+- `api/mascot.ts`: backend seguro del chat con Gemini.
 - `firestore.rules`: reglas de seguridad.
 - `firestore.indexes.json`: índice compuesto de Firestore.
 - `firebase.json` y `.firebaserc`: configuración de Firebase CLI.
-- `.env.example`: plantilla de variables de entorno de Firebase y AWS.
+- `.env.example`: plantilla de variables de entorno de Firebase, AWS y Gemini.
 
 </details>
 
