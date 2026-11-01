@@ -241,8 +241,6 @@ async function callGemini(
     parts: [{ text: item.content }],
   }));
   contents.push({ role: 'user', parts: [{ text: message }] });
-  const disableThinking = /gemini-[\d.]+-(?:flash|lite)/i.test(model);
-
   const response = await fetch(
     `${GEMINI_BASE}/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
     {
@@ -255,7 +253,6 @@ async function callGemini(
           temperature: settings.temperature,
           maxOutputTokens,
           candidateCount: 1,
-          ...(disableThinking ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
         },
       }),
     },
