@@ -16,6 +16,7 @@ export default function Landing({ onAbout }: LandingProps) {
         </ul>
         <div className="landing__actions">
           <Link className="button primary" to="/tareas">Ingresar</Link>
+          <Link className="button ghost" to="/contacto">Contacto</Link>
           <button className="button secondary" onClick={onAbout}>¿Qué es KeepUp?</button>
         </div>
       </div>

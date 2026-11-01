@@ -40,6 +40,9 @@ export default function Navbar({ theme, onToggleTheme, onAbout }: NavbarProps) {
           >
             ¿Qué es KeepUp?
           </button>
+          <NavLink className={linkClass} to="/contacto" onClick={closeMenu}>
+            Contacto
+          </NavLink>
 
           {isAuthenticated ? (
             <Link

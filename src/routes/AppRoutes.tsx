@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ProtectedRoute from '../components/ProtectedRoute';
+import Contact from '../pages/Contact';
 import Landing from '../pages/Landing';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
@@ -20,6 +21,7 @@ export default function AppRoutes({ theme, onToggleTheme, onAbout }: AppRoutesPr
     <Routes>
       <Route element={<Layout theme={theme} onToggleTheme={onToggleTheme} onAbout={onAbout} />}>
         <Route path="/" element={<Landing onAbout={onAbout} />} />
+        <Route path="/contacto" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
         <Route element={<ProtectedRoute />}>
