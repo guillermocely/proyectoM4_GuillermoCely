@@ -17,7 +17,7 @@ function App() {
 
   return (
     <>
-      <WavesBackdrop text="KeepUp" scroll={!opening} />
+      <WavesBackdrop text="KeepUp" scroll={!opening} theme={theme} />
       <div className={`keepup-app${opening ? ' is-opening' : ''}`} inert={opening}>
         <AppRoutes theme={theme} onToggleTheme={toggleTheme} onAbout={() => setAboutOpen(true)} />
       </div>

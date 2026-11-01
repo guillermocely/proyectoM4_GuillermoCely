@@ -1,11 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import type { Theme } from '../../types/theme';
 import type { WavesBackdropProps } from './WavesBackdrop.types';
 import './WavesBackdrop.css';
 
 const ShapeWaves = lazy(() => import('../ShapeWaves'));
 
-const DEFAULT_BACKGROUND = '#1d1d1b';
-const DEFAULT_FOREGROUND = '#f5f1e8';
+const PALETTES: Record<Theme, { foreground: string; background: string }> = {
+  dark: { foreground: '#f5f1e8', background: '#1d1d1b' },
+  light: { foreground: '#25231f', background: '#f4f1ea' },
+};
 
 type GpuProbe = {
   requestAdapter: () => Promise<{
@@ -19,7 +22,13 @@ function readGpu(): GpuProbe | undefined {
 }
 
 // Canvas de respaldo para equipos sin WebGPU; conserva el efecto básico usable.
-function FallbackWaves({ text }: { text: string }) {
+function FallbackWaves({
+  text,
+  colors,
+}: {
+  text: string;
+  colors: { foreground: string; background: string };
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
   const textRef = useRef(text);
   useEffect(() => {
@@ -32,9 +41,7 @@ function FallbackWaves({ text }: { text: string }) {
     let frame = 0;
     let width = 0;
     let height = 0;
-    const colors = getComputedStyle(document.documentElement);
-    const foreground = colors.getPropertyValue('--splash-foreground').trim() || DEFAULT_FOREGROUND;
-    const background = colors.getPropertyValue('--splash').trim() || DEFAULT_BACKGROUND;
+    const { foreground, background } = colors;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const resize = () => {
       width = canvas.clientWidth;
@@ -83,19 +90,13 @@ function FallbackWaves({ text }: { text: string }) {
     };
     frame = requestAnimationFrame(draw);
     return () => { cancelAnimationFrame(frame); observer.disconnect(); };
-  }, []);
+  }, [colors]);
   return <canvas ref={ref} className="waves-backdrop__canvas" aria-hidden="true" />;
 }
 
 // Fondo animado de ondas con texto opcional tipo marquee.
-export default function WavesBackdrop({ text, scroll = false }: WavesBackdropProps) {
-  const [colors] = useState<{ foreground: string; background: string }>(() => {
-    const style = getComputedStyle(document.documentElement);
-    return {
-      foreground: style.getPropertyValue('--splash-foreground').trim() || DEFAULT_FOREGROUND,
-      background: style.getPropertyValue('--splash').trim() || DEFAULT_BACKGROUND,
-    };
-  });
+export default function WavesBackdrop({ text, scroll = false, theme }: WavesBackdropProps) {
+  const colors = PALETTES[theme];
   const [failed, setFailed] = useState(() => !readGpu());
   useEffect(() => {
     const gpu = readGpu();
@@ -107,10 +108,11 @@ export default function WavesBackdrop({ text, scroll = false }: WavesBackdropPro
   }, []);
   return (
     <div data-waves-text={text} className="waves-backdrop" aria-hidden="true">
-      {failed && <FallbackWaves text={text} />}
-      {colors && !failed && (
+      {failed && <FallbackWaves key={theme} text={text} colors={colors} />}
+      {!failed && (
         <Suspense fallback={null}>
           <ShapeWaves
+            key={theme}
             text={text}
             fontFamily='"Space Grotesk", sans-serif'
             fontWeight={700}
