@@ -1,77 +1,87 @@
 # KeepUp
 
-🚀 **[Ver demo en vivo → proyecto-m4-guillermo-cely.vercel.app](https://proyecto-m4-guillermo-cely.vercel.app/)**
+[Ver demo en vivo](https://proyecto-m4-guillermo-cely.vercel.app/) · [Ver bocetos de interfaz en Figma](https://www.figma.com/design/B2DkASQBGZ7SdeBgasB998/KeepUp-%E2%80%94-Bocetos-de-interfaz?node-id=0-1)
 
-KeepUp es una app de tareas personales con autenticación, perfil con avatar, prioridades, fechas límite y tareas mensuales recurrentes. Cada usuario ve y modifica únicamente sus propias tareas, guardadas en Cloud Firestore. También incluye una mascota personalizable con chat de Gemini y un formulario de contacto que envía correos con Amazon SES.
+KeepUp es una app de tareas con autenticación, prioridades, fechas límite y recurrencia mensual. Cada usuario ve solo sus tareas en Cloud Firestore, con perfil, tema, mascota con chat de Gemini y contacto por Amazon SES.
 
-**Tecnologías**
+Los bocetos de interfaz están documentados en Figma para mostrar el proceso de diseño y la estructura de las pantallas.
 
-- React 19 + TypeScript + Vite
-- Firebase Authentication (correo/contraseña y Google)
-- Cloud Firestore
-- React Router
-- React Toastify
-- Google Gemini (chat de la mascota)
-- AWS IAM + Amazon SES (formulario de contacto)
-- Vercel (serverless functions)
-- vgpu / WebGPU (fondo animado)
-- VS Code, Git, npm, OpenCode y Firebase Console
+- Inicio de sesión con correo/contraseña y Google.
+- CRUD de tareas con prioridad, fecha límite, búsqueda, filtros y recurrencia mensual.
+- Perfil con avatar y tema claro/oscuro.
+- Mascota personalizable con chat seguro de Gemini.
+- Formulario de contacto con Amazon SES.
+- Reglas de Firestore por usuario y despliegue en Vercel.
+
+## Tecnologías
+
+![React](https://img.shields.io/badge/React-19.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8.3.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-13.0.0-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![AWS SES](https://img.shields.io/badge/AWS_SES-3.1161.0-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-65.9.0-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.5_Flash_Lite-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24.12.0-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Git](https://img.shields.io/badge/Git-2.55.0-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-Bocetos-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+
+## Inicio rápido
+
+```bash
+git clone https://github.com/guillermocely/proyectoM4_GuillermoCely.git
+cd proyectoM4_GuillermoCely
+npm install
+cp .env.example .env
+npm run dev
+```
+
+> Usa Node 24.12+. En Windows PowerShell, copia el archivo con `Copy-Item .env.example .env`. Completa el `.env` antes de abrir la app. Para probar `/api/mascot` y `/api/send-email`, ejecuta `vercel link` y luego `npm run dev:vercel`.
 
 <details>
 <summary>✅ Requisitos previos</summary>
 
-| Herramienta | Versión | Enlace |
+| Requisito | Versión | Descarga |
 |---|---|---|
-| Node.js | 24.12 o superior (recomendado) | https://nodejs.org |
-| npm | 10 o superior (viene con Node.js) | — |
-| Git | Última versión | https://git-scm.com/downloads |
-| Visual Studio Code (opcional) | Última versión | https://code.visualstudio.com |
-| Cuenta de Google / Firebase | — | https://console.firebase.google.com |
-| Cuenta de AWS | — | https://aws.amazon.com |
+| Node.js | 24.12.0 o superior | [Descargar Node.js](https://nodejs.org/en/download) |
+| npm | 10 o superior (viene con Node.js) | [Guía de npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) |
+| Git | Última versión (opcional si descargas el ZIP) | [Descargar Git](https://git-scm.com/downloads) |
+| Visual Studio Code (opcional) | Última versión | [Descargar VS Code](https://code.visualstudio.com/download) |
+| Cuenta de Firebase | — | [Firebase Console](https://console.firebase.google.com/) |
+| Cuenta de AWS | — | [AWS Console](https://aws.amazon.com/console/) |
+| Cuenta de Vercel | — | [Crear cuenta en Vercel](https://vercel.com/signup) |
 
-> Firebase 13 requiere Node `>=24.12.0`; Vite 8 acepta `^20.19.0 || >=22.12.0`. Node 22.14 funciona, pero `npm install` muestra warnings. Para una instalación limpia usá Node 24.12+.
+**React no se descarga por separado.** `npm install` instala React y React DOM **19.3.1**, Vite **8.3.4** y las demás dependencias definidas en `package.json`. La documentación oficial está en [react.dev](https://react.dev/).
+
+> Si solo quieres revisar el proyecto, no necesitas instalar nada: abre el demo o los bocetos de Figma. Para ejecutarlo en local, instala Node.js 24.12+ y Git; npm viene incluido con Node. El repo incluye `.nvmrc` con `24.12.0` por si usas `nvm`. `package.json` declara `engines.node` como `>=24.12.0`.
 
 </details>
 
 <details>
 <summary>🚀 Instalación y ejecución</summary>
 
-1. Clonar el repositorio:
+### 1. Obtén el código
+
+Con Git:
 
 ```bash
 git clone https://github.com/guillermocely/proyectoM4_GuillermoCely.git
 cd proyectoM4_GuillermoCely
 ```
 
-2. Instalar todas las dependencias:
+Si descargas el ZIP, descomprímelo y abre esa carpeta en la terminal.
+
+### 2. Instala las dependencias
 
 ```bash
 npm install
 ```
 
-3. Dependencias principales (ya vienen en `package.json`; solo si las necesitás por separado):
+Esto instala todo lo que usa el proyecto. No necesitas instalar Firebase, React, AWS SDK ni Vercel por separado.
 
-```bash
-npm install firebase
-npm install react-toastify
-```
+### 3. Crea el archivo de variables de entorno
 
-- `firebase`: autenticación y base de datos Firestore.
-- `react-toastify`: notificaciones de éxito y error (por ejemplo, inicio de sesión con Google o importación de tareas).
-
-4. Dependencias de AWS y Vercel (para el formulario de contacto):
-
-```bash
-npm install @aws-sdk/client-ses
-npm install -D @vercel/node
-npm install -g vercel
-```
-
-- `@aws-sdk/client-ses`: envía el correo desde la función serverless.
-- `@vercel/node`: tipos para la función de Vercel.
-- `vercel`: CLI para probar la función en local y desplegar.
-
-5. Crear el archivo de variables de entorno:
+En macOS o Linux:
 
 ```bash
 cp .env.example .env
@@ -83,25 +93,41 @@ En Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Completá las variables de Firebase y de AWS (ver secciones siguientes). El archivo `.env` está en `.gitignore` y no se sube al repositorio.
+Abre `.env` y completa las variables de Firebase. Las de AWS y Gemini son opcionales si no vas a probar el contacto ni la mascota. El archivo `.env` está en `.gitignore` y no se sube al repositorio. Si cambias el `.env`, reinicia el servidor.
 
-6. Ejecutar la app:
+### 4. Ejecuta la app
 
 ```bash
 npm run dev
 ```
 
-Abrí **http://localhost:5173**.
+Abre `http://localhost:5173`. Este comando solo levanta Vite: la autenticación y las tareas funcionan, pero las rutas `/api/mascot` y `/api/send-email` no existen en ese servidor.
 
-Para probar también el formulario de contacto y la función de AWS:
+### 5. Prueba las funciones serverless
 
 ```bash
+vercel link
+vercel pull
 npm run dev:vercel
 ```
 
-> `npm run dev` solo levanta Vite. La ruta `/api/send-email` no existe ahí; usá `npm run dev:vercel` o un deploy en Vercel.
+- `vercel link` vincula la carpeta con tu proyecto de Vercel. Si no tienes uno, la CLI te guía para crearlo.
+- `vercel pull` descarga la configuración y las variables del entorno **Development** en `.vercel/`. Es el paso recomendado por Vercel para `vercel dev` y `vercel build`.
+- `vercel dev` también descarga esas variables automáticamente. Si quieres que `npm run dev` (Vite) lea las variables de Vercel, ejecuta `vercel env pull .env.local`; Vite le da prioridad a `.env.local` sobre `.env`.
+- `npm run dev:vercel` usa el `vercel` local que instala `npm install`; no necesitas instalarlo de forma global.
+- Si no eres el dueño del proyecto en Vercel, crea tu propio proyecto, ejecuta `vercel link` y carga tus propias variables en **Settings → Environment Variables**. No uses credenciales ajenas.
 
-7. Opcional, para comprobar la versión de producción:
+### 6. Scripts disponibles
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Inicia Vite en `http://localhost:5173`. |
+| `npm run dev:vercel` | Inicia Vite y las funciones de `api/` con `vercel dev`. |
+| `npm run lint` | Ejecuta ESLint. |
+| `npm run build` | Compila TypeScript y genera `dist/`. |
+| `npm run preview` | Sirve la carpeta `dist/` para probar el build. |
+
+### 7. Verifica el build
 
 ```bash
 npm run lint
@@ -112,39 +138,72 @@ npm run preview
 </details>
 
 <details>
-<summary>📦 Versiones usadas</summary>
+<summary>▲ Desplegar en Vercel (variables de entorno y dominios)</summary>
 
-| Paquete | Versión instalada | Declarada en `package.json` |
-|---|---|---|
-| React | 19.3.1 | `^19.2.8` |
-| React DOM | 19.3.1 | `^19.2.8` |
-| Vite | 8.3.4 | `^8.3.0` |
-| TypeScript | 6.0.3 | `~6.0.2` |
-| Firebase | 13.0.0 | `^13.0.0` |
-| React Router DOM | 7.18.4 | `^7.18.4` |
-| React Toastify | 11.1.0 | `^11.1.0` |
-| AWS SDK para SES | 3.1161.0 | `^3.1161.0` |
-| `@vercel/node` | 29.0.1 | `^29.0.1` (dev) |
-| Node.js | 22.14.0 (probado) | Firebase 13 exige `>=24.12.0`; Vite 8 acepta `^20.19.0` o `>=22.12.0` |
-| npm | 10.9.2 | — |
+### 1. Despliega el proyecto
 
-> `package.json` no define `engines`. Para evitar warnings de Firebase, usá Node 24.12+. Las versiones instaladas son las que resuelve `npm install` con los rangos declarados.
+```bash
+npx vercel --prod
+```
+
+Vercel detecta Vite y la carpeta `api/` sin necesidad de `vercel.json`.
+
+### 2. Variables de entorno en Vercel
+
+En **Vercel → tu proyecto → Settings → Environment Variables**, agrega estas variables y marca **Production**, **Preview** y **Development**:
+
+```env
+VITE_FIREBASE_API_KEY=tu_api_key
+VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=tu_proyecto_id
+VITE_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+VITE_FIREBASE_APP_ID=tu_app_id
+
+AWS_REGION=us-east-2
+AWS_ACCESS_KEY_ID=tu_access_key_id
+AWS_SECRET_ACCESS_KEY=tu_secret_access_key
+SES_FROM_EMAIL=tu_correo_verificado@gmail.com
+SES_TO_EMAIL=destinatario@example.com
+
+GEMINI_API_KEY=tu_gemini_api_key
+GEMINI_MODEL=gemini-3.5-flash-lite
+FIREBASE_API_KEY=tu_api_key_web_de_firebase
+```
+
+- Las variables con prefijo `VITE_` las necesita Vite durante el build del frontend.
+- Las de AWS y Gemini las usan las funciones de `api/` en runtime. No llevan prefijo `VITE_` porque son secretos.
+- `FIREBASE_API_KEY` puede ser la misma `VITE_FIREBASE_API_KEY`; si no la defines, el servidor usa `VITE_FIREBASE_API_KEY`.
+- Después de agregar o cambiar variables, haz un **Redeploy** para que el build y las funciones tomen los valores nuevos.
+
+### 3. Dominios autorizados en Firebase
+
+Si Vercel no completa el deploy, revisa los logs del build, ejecuta `npm run build` en local y confirma que las variables estén cargadas. Si el deploy abre pero falla el inicio de sesión con Google, o si la app desplegada no responde como esperas, revisa primero las variables de entorno y luego **Firebase → Authentication → Settings → Authorized domains**. Agrega el dominio de producción y los dominios de preview que uses. Ejemplo con los dominios de este proyecto:
+
+| Dominio autorizado | Uso |
+|---|---|
+| `localhost` | Desarrollo local. |
+| `pt36-keepup.firebaseapp.com` | Dominio de Firebase Authentication. |
+| `pt36-keepup.web.app` | Dominio de Firebase Hosting. |
+| `proyecto-m4-guillermo-cely.vercel.app` | Dominio de producción en Vercel. |
+| `proyecto-m4-guillermo-cely-les1tgt0z-guillermo-celys-projects.vercel.app` | Preview de Vercel. |
+| `proyecto-m4-guillermo-cely-dyogm1ntr-guillermo-celys-projects.vercel.app` | Preview de Vercel. |
+| `proyecto-m4-guillermo-cely-git-main-guillermo-celys-projects.vercel.app` | Preview de la rama `main`. |
+
+> Los dominios de preview cambian con cada deploy. Copia el dominio actual desde **Vercel → Deployments** y agrégalo a la lista si el login falla en esa URL. No necesitas agregar rutas: solo el dominio, sin `https://` ni `/` final.
 
 </details>
 
 <details>
-<summary>🔥 Configurar Firebase (paso a paso)</summary>
+<summary>🔥 Configurar Firebase</summary>
 
-1. Crear el proyecto:
+### 1. Crea el proyecto y la app web
 
-- Entrá a https://console.firebase.google.com
-- **Agregar proyecto** → escribí un nombre → **Crear proyecto**.
+1. Entra a Firebase Console y crea un proyecto.
+2. En **Project settings → General → Your apps**, haz clic en el ícono `</>`.
+3. Registra la app web y copia los valores de `firebaseConfig`.
 
-2. Registrar la app web:
-
-- **Project settings → General → Your apps**.
-- Clic en el ícono **`</>`** → nombre de la app → **Register app**.
-- Copiá los valores de `firebaseConfig` al archivo `.env`:
+### 2. Completa el `.env`
 
 ```env
 VITE_FIREBASE_API_KEY=tu_api_key
@@ -155,26 +214,24 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
 VITE_FIREBASE_APP_ID=tu_app_id
 ```
 
-El código lee estas variables con `import.meta.env.VITE_...`; por ejemplo, `import.meta.env.VITE_FIREBASE_API_KEY`.
+El código lee estas variables con `import.meta.env.VITE_...` en `src/firebase/config.ts`.
 
-3. Activar los métodos de ingreso:
+### 3. Activa los métodos de ingreso
 
-- **Build → Authentication → Get started**.
-- **Sign-in method → Email/Password → Enable → Save**.
-- **Sign-in method → Google → Enable** → elegí el correo de soporte → **Save**.
-- **Authentication → Settings → Authorized domains**: agregá tu dominio de despliegue. `localhost` ya está autorizado.
+1. Ve a **Build → Authentication → Get started**.
+2. En **Sign-in method**, habilita **Email/Password** y **Google**.
+3. Para Google, elige un correo de soporte y guarda.
+4. En **Authentication → Settings → Authorized domains**, `localhost` ya está autorizado. Agrega tu dominio de producción de Vercel, los dominios de preview y cualquier dominio propio. Si el inicio de sesión con Google falla en el celular, revisa primero esta lista y el correo de soporte del proveedor. En el checklist de Vercel de este README tienes un ejemplo con los dominios de este proyecto.
 
-4. Crear Cloud Firestore:
+### 4. Crea Cloud Firestore
 
-- **Build → Firestore Database → Create database**.
-- Elegí **Production mode** (no Test mode).
-- Elegí la ubicación. **No se puede cambiar después.**
+1. Ve a **Build → Firestore Database → Create database**.
+2. Elige **Production mode**, no **Test mode**.
+3. Elige la ubicación. No se puede cambiar después.
 
-5. Pegar las reglas de seguridad:
+### 5. Publica las reglas
 
-- **Firestore Database → Rules**.
-- Borrá todo y pegá el contenido de `firestore.rules` (también está acá abajo).
-- Clic en **Publish**.
+En **Firestore Database → Rules**, borra el contenido y pega las reglas completas de `firestore.rules`. Luego haz clic en **Publish**.
 
 ```js
 rules_version = '2';
@@ -183,6 +240,24 @@ service cloud.firestore {
     // Deniega todo por defecto.
     match /{document=**} {
       allow read, write: if false;
+    }
+
+    match /users/{userId}/mascot/{documentId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/mascotMessages/{messageId} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAll(['role', 'content', 'createdAt'])
+        && request.resource.data.role in ['user', 'assistant']
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.content.size() <= 1000
+        && request.resource.data.createdAt is string
+        && request.resource.data.createdAt.size() <= 40;
     }
 
     match /tasks/{taskId} {
@@ -236,42 +311,55 @@ service cloud.firestore {
 }
 ```
 
-6. Crear el índice compuesto:
+### 6. Crea el índice compuesto
 
-- **Firestore Database → Índices → Crear índice**.
-- Elegí **índice estructurado**.
-- Completá:
+En **Firestore Database → Índices → Crear índice**, elige **Índice estructurado** y completa:
 
 | Colección | Campo 1 | Campo 2 | Alcance |
 |---|---|---|---|
 | `tasks` | `userId` — Ascendente | `createdAt` — Descendente | Colección |
 
-- Clic en **Crear** y esperá a que pase de **Compilando** a **Enabled**.
+Espera a que el estado pase de **Compilando** a **Enabled**. El repositorio incluye el mismo índice en `firestore.indexes.json`:
 
-> No hacen falta otros índices compuestos. Firestore agrega `__name__` automáticamente.
+```json
+{
+  "indexes": [
+    {
+      "collectionGroup": "tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
+```
 
-7. Estructura de datos:
+No hacen falta otros índices compuestos. Firestore agrega `__name__` automáticamente.
 
-- Cada tarea se guarda en `tasks/{taskId}`.
-- Campos: `userId`, `title`, `description`, `priority`, `dueDate`, `completed`, `repeatMonthly` y `createdAt`.
+### 7. Modelo de datos
+
+- Cada tarea se guarda en `tasks/{taskId}` con `userId`, `title`, `description`, `priority`, `dueDate`, `completed`, `repeatMonthly` y `createdAt`.
 - La consulta usa `where('userId', '==', uid)` y `orderBy('createdAt', 'desc')`.
+- La mascota guarda sus preferencias en `users/{uid}/mascot/settings` y el historial en `users/{uid}/mascotMessages/{messageId}`.
+- El avatar se guarda en el navegador con `localStorage`, bajo la clave `keepup-avatar-{uid}`. No se guarda en Firestore ni en Cloud Storage.
 
-> El repositorio incluye `firebase.json`, `firestore.rules` y `firestore.indexes.json`. Si vas a desplegar con la CLI, cambiá el project ID de `.firebaserc` por el tuyo.
+### 8. Sobre la API key de Firebase
+
+La `apiKey` web de Firebase es pública por diseño: viaja en el bundle del navegador y no es un secreto. La seguridad real está en las reglas de Firestore y en las reglas de Authentication. Nunca pongas claves de AWS o de Gemini con prefijo `VITE_`.
+
+> El repo incluye `firebase.json`, `firestore.rules`, `firestore.indexes.json` y `.firebaserc`. Si usas la CLI de Firebase, cambia el project ID de `.firebaserc` por el tuyo antes de desplegar.
 
 </details>
 
 <details>
-<summary>Configurar Mi mascota y Gemini</summary>
+<summary>🐾 Mi mascota y Gemini</summary>
 
-La personalización de la mascota está en `/perfil`, como una sección adicional que no modifica los datos de la cuenta. El chat flotante aparece en `/tareas`.
+La mascota se personaliza en `/perfil` y el chat flotante aparece en `/tareas`. Las preferencias se guardan en `users/{uid}/mascot/settings` y el historial en `users/{uid}/mascotMessages/{messageId}`. Las reglas de Firestore ya cubren ambas rutas.
 
-1. Publicar las reglas de Firestore:
-
-- Copiá el contenido actualizado de `firestore.rules` en **Firestore Database → Rules**.
-- Las preferencias se guardan en `users/{uid}/mascot/settings` y el historial en `users/{uid}/mascotMessages/{messageId}`.
-- Solo el usuario dueño puede leer y escribir sus propios documentos.
-
-2. Configurar las variables del servidor:
+### Variables del servidor
 
 ```env
 GEMINI_API_KEY=tu_gemini_api_key
@@ -279,57 +367,57 @@ GEMINI_MODEL=gemini-3.5-flash-lite
 FIREBASE_API_KEY=tu_api_key_web_de_firebase
 ```
 
-- `GEMINI_API_KEY` se obtiene en [Google AI Studio](https://aistudio.google.com/app/apikey) y nunca debe llevar el prefijo `VITE_`.
-- `GEMINI_MODEL` es opcional. El servidor consulta los modelos disponibles y usa el indicado si admite `generateContent`; si no, elige un modelo Flash disponible.
-- `FIREBASE_API_KEY` es la misma API key web de Firebase. Se usa solo en el servidor para verificar el ID token del usuario antes de llamar a Gemini.
-- Cargalas en **Vercel → Settings → Environment Variables** para **Production** y **Development**.
+- `GEMINI_API_KEY` se obtiene en Google AI Studio. No lleva prefijo `VITE_` porque es un secreto de servidor.
+- `GEMINI_MODEL` es opcional. El valor por defecto es `gemini-3.5-flash-lite`. El servidor verifica que el modelo exista y admita `generateContent`; si no está disponible, elige un modelo Flash disponible.
+- `FIREBASE_API_KEY` es la misma API key web de Firebase. Se usa en el servidor para verificar el ID token del usuario antes de llamar a Gemini. Si no la defines, se usa `VITE_FIREBASE_API_KEY`.
+- `GOOGLE_GENERATIVE_AI_API_KEY` funciona como alias de `GEMINI_API_KEY`.
+- Carga estas variables en Vercel para **Production** y **Development**.
 
-3. Probar en local:
+### Límites y seguridad
+
+- El navegador nunca recibe `GEMINI_API_KEY`.
+- `/api/mascot` valida el método, el mensaje, el historial, las tareas y la configuración.
+- Envía como máximo 20 mensajes de historial y 30 tareas al modelo.
+- La respuesta se limita a 30 palabras.
+- `temperature` se limita a 0–1 y `maxTokens` a 128–1024.
+- La app lee hasta 80 mensajes del historial guardado.
+- El endpoint verifica el ID token de Firebase con Identity Toolkit.
+
+### Probar en local
 
 ```bash
 vercel link
+vercel pull
 npm run dev:vercel
 ```
 
-- `npm run dev` solo ejecuta Vite y no expone `/api/mascot`.
-- Abrí `/perfil`, personalizá la mascota y guardá.
-- Abrí `/tareas`, tocá la mascota y enviá una pregunta.
-
-4. Seguridad y comportamiento:
-
-- El navegador nunca recibe `GEMINI_API_KEY`.
-- `api/mascot.ts` valida el método, el tamaño de los mensajes, la temperatura y el límite de tokens.
-- Antes de generar la respuesta verifica el ID token de Firebase con Identity Toolkit.
-- El modelo se valida contra la lista de modelos disponibles de Gemini.
-- Las respuestas son completas, en español rioplatense y de un máximo de 30 palabras.
-- El historial y las preferencias son privados por usuario mediante las reglas de Firestore.
+Abre `/perfil`, personaliza la mascota y guarda. Luego abre `/tareas` y usa el chat. `npm run dev` no expone `/api/mascot`.
 
 </details>
 
 <details>
-<summary>☁️ Configurar Amazon SES (formulario de contacto)</summary>
+<summary>☁️ Amazon SES (formulario de contacto)</summary>
 
 El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Vercel usa Amazon SES; el navegador nunca recibe las claves de AWS.
 
-1. Crear el usuario IAM:
+### 1. Crea el usuario IAM
 
-- En la consola de AWS, buscá **IAM → Users → Create user**.
-- Nombre sugerido: `keepup-ses-sender`.
-- Dejá **No, I'll set up custom permissions**.
-- En **Security credentials → Create access key**, elegí **Application running outside AWS**.
-- Copiá el **Access key ID** y el **Secret access key** (no se vuelven a mostrar).
+1. En la consola de AWS, ve a **IAM → Users → Create user**.
+2. Nombre sugerido: `keepup-ses-sender`.
+3. Elige **No, I'll set up custom permissions**.
+4. En **Security credentials → Create access key**, selecciona **Application running outside AWS**.
+5. Copia el **Access key ID** y el **Secret access key**. El secreto no se vuelve a mostrar.
 
-2. Verificar el correo remitente en SES:
+### 2. Verifica el correo remitente en SES
 
-- Elegí una región, por ejemplo **`us-east-2`**, y usá la misma en todas las variables.
-- **SES → Identities → Create identity → Email address**.
-- Escribí el correo desde el que querés enviar y confirmá el link que llega por email.
-- La identidad debe quedar en estado **Verified**.
+1. Elige una región, por ejemplo `us-east-2`, y usa la misma en todas las variables.
+2. Ve a **SES → Identities → Create identity → Email address**.
+3. Escribe el correo desde el que quieres enviar y confirma el enlace que llega por email.
+4. La identidad debe quedar en estado **Verified**.
 
-3. Dar permiso para enviar:
+### 3. Da permiso para enviar
 
-- **IAM → Users → tu usuario → Add permissions → Create policy**.
-- Pestaña **JSON**:
+En **IAM → Users → tu usuario → Add permissions → Create policy**, usa la pestaña **JSON**:
 
 ```json
 {
@@ -344,11 +432,9 @@ El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Ver
 }
 ```
 
-- Nombre de la policy: `ses-send-email` → **Create policy**.
-- Volvé al usuario → **Add permissions** → adjuntá `ses-send-email`.
-- Para mínimo privilegio, reemplazá `"*"` por el ARN de tu identidad SES.
+Nombra la policy `ses-send-email`, créala y adjúntala al usuario. Para mínimo privilegio, reemplaza `"*"` por el ARN de tu identidad de SES.
 
-4. Cargar las variables:
+### 4. Carga las variables
 
 ```env
 AWS_REGION=us-east-2
@@ -358,28 +444,64 @@ SES_FROM_EMAIL=tu_correo_verificado@gmail.com
 SES_TO_EMAIL=destinatario@example.com
 ```
 
-- Cargalas en **Vercel → Settings → Environment Variables** y marcalas para **Production** y **Development** (y Preview si querés).
-- Para `vercel dev`, la función toma las variables del proyecto linkeado; el `.env` de Vite no se usa para la API.
-- **No** llevan prefijo `VITE_`: son secretos y Vite no debe incluirlos en el bundle.
-- El destinatario es fijo (`SES_TO_EMAIL`). El correo del formulario solo se usa como `Reply-To`.
+- Carga estas variables en **Vercel → Settings → Environment Variables** para **Production** y **Development**. Marca **Preview** si también quieres probar ahí.
+- No llevan prefijo `VITE_`: son secretos y no deben llegar al navegador.
+- El destinatario es fijo (`SES_TO_EMAIL`). El correo que escribe la persona en el formulario se usa como `Reply-To`.
 
-5. Probar el envío:
+### 5. Prueba el envío
 
 ```bash
 vercel link
+vercel pull
 npm run dev:vercel
 ```
 
-- `vercel link` vincula la carpeta con tu proyecto; `vercel dev` descarga las variables del entorno **Development**.
-- Abrí `/contacto`, completá el formulario y enviá.
-- Para producción, desplegá con `vercel --prod` y agregá las cinco variables en Vercel antes de redeployar.
-- `npm run dev` no ejecuta la función: solo Vite.
+Abre `/contacto`, completa el formulario y envía. `npm run dev` no ejecuta la función: solo levanta Vite.
 
-6. Si el correo no llega:
+### 6. Si el correo no llega
 
-- En **SES sandbox**, el destinatario también debe estar verificado en SES.
-- Un remitente `@gmail.com` puede caer en Spam; para producción usá un dominio propio con SPF, DKIM y DMARC.
-- Revisá **CloudWatch → Logs → `SES-RESPONSE`** para ver si SES entregó, rebotó o rechazó el mensaje.
+- En el **sandbox de SES**, el destinatario también debe estar verificado.
+- Un remitente `@gmail.com` puede caer en Spam. Para producción, usa un dominio propio con SPF, DKIM y DMARC.
+- Revisa los logs de `/api/send-email` en Vercel y el estado de la identidad en SES para ver si el correo se entregó, rebotó o rechazó.
+
+</details>
+
+<details>
+<summary>📦 Versiones usadas</summary>
+
+### Frontend
+
+| Tecnología | Para qué se usa | Versión |
+|---|---|---|
+| React + React DOM | Interfaz y render en el navegador | 19.3.1 |
+| TypeScript | Tipado estático y compilación | 6.0.3 |
+| Vite | Servidor de desarrollo y build | 8.3.4 |
+| React Router DOM | Rutas públicas y privadas | 7.18.4 |
+| React Toastify | Notificaciones de éxito y error | 11.1.0 |
+| vgpu + @vgpu/wgsl | Fondo animado WebGPU | 0.6.0 |
+
+### Backend y servicios
+
+| Tecnología | Para qué se usa | Versión |
+|---|---|---|
+| Firebase | Authentication y Cloud Firestore | 13.0.0 |
+| Gemini API | Chat de la mascota | `gemini-3.5-flash-lite` (configurable) |
+| @aws-sdk/client-ses | Envío de correos del formulario | 3.1161.0 |
+| Vercel CLI | `dev:vercel` y despliegue | 65.9.0 |
+| @vercel/node | Tipos de las funciones serverless | 29.0.1 |
+
+### Herramientas
+
+| Tecnología | Para qué se usa | Versión |
+|---|---|---|
+| Node.js | Runtime del proyecto | 24.12.0 (probado) |
+| npm | Instalación de dependencias | 10.9.2 |
+| ESLint | Análisis estático | 10.12.0 |
+| typescript-eslint | Reglas de ESLint para TypeScript | 8.71.2 |
+| Vitest | Pruebas (configurado, sin tests todavía) | 5.0.4 |
+| Git | Control de versiones | 2.55.0 |
+
+> Las versiones son las instaladas por `npm install`; los rangos declarados están en `package.json`. La instalación limpia con `npm ci` y `npm run build` se probó con Node 24.12.0. El build emite una advertencia de tamaño de chunk mayor a 500 kB; no impide compilar.
 
 </details>
 
@@ -387,36 +509,38 @@ npm run dev:vercel
 <summary>🗂️ Estructura del proyecto</summary>
 
 ```txt
-api/
-├── send-email.ts  Función serverless que envía correos con SES
-└── mascot.ts      Función serverless que valida la sesión y consulta Gemini
-
-src/
-├── components/   Componentes reutilizables (TaskCard, Navbar, Mascot...)
-├── contexts/     Sesión de Firebase (AuthProvider)
-├── firebase/     Configuración de app, auth y Firestore
-├── helpers/      Validaciones y mensajes de error
-├── hooks/        useTasks, useTaskFilters, useTheme, useAvatar, useMascotSettings
-├── pages/        Landing, Contact, Login, Register, Tasks, Profile
-├── routes/       Rutas de React Router
-├── services/     Firestore, migración de tareas, avatar y mascota
-├── types/        Tipos TypeScript
-├── utils/        Fechas, orden e imágenes
-├── App.tsx       Composición general
-└── main.tsx      Punto de entrada
+KeepUp/
+├─ api/
+│  ├─ mascot.ts              Función serverless del chat con Gemini
+│  └─ send-email.ts          Función serverless del formulario con SES
+├─ public/
+├─ src/
+│  ├─ components/            Componentes reutilizables
+│  ├─ contexts/              Sesión de Firebase (AuthProvider)
+│  ├─ firebase/              Configuración de app, auth y Firestore
+│  ├─ helpers/               Validaciones y mensajes de error
+│  ├─ hooks/                 useTasks, useTaskFilters, useTheme, useAvatar...
+│  ├─ pages/                 Landing, Contact, Login, Register, Tasks, Profile
+│  ├─ routes/                Rutas de React Router
+│  ├─ services/              Firestore, migración, avatar y mascota
+│  ├─ types/                 Tipos TypeScript
+│  ├─ utils/                 Fechas, orden e imágenes
+│  ├─ App.tsx                Composición general
+│  └─ main.tsx               Punto de entrada
+├─ tests/                    Carpeta vacía; todavía no hay tests
+├─ .env.example              Plantilla de variables de entorno
+├─ .nvmrc                    Versión de Node recomendada
+├─ firebase.json             Configuración de Firebase CLI
+├─ firestore.indexes.json    Índice compuesto de Firestore
+├─ firestore.rules           Reglas de seguridad
+├─ package.json              Dependencias y scripts
+└─ vite.config.ts            Configuración de Vite
 ```
-
-Archivos importantes en la raíz:
-
-- `api/send-email.ts`: backend del formulario de contacto con AWS SES.
-- `api/mascot.ts`: backend seguro del chat con Gemini.
-- `firestore.rules`: reglas de seguridad.
-- `firestore.indexes.json`: índice compuesto de Firestore.
-- `firebase.json` y `.firebaserc`: configuración de Firebase CLI.
-- `.env.example`: plantilla de variables de entorno de Firebase, AWS y Gemini.
 
 </details>
 
 ---
 
 Autor: **Guillermo Cely**
+
+<!-- Agrega aquí tus enlaces de LinkedIn y portafolio cuando los tengas. -->
