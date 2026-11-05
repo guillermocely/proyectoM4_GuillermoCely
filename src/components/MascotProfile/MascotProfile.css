@@ -40,8 +40,7 @@
   text-transform: uppercase;
 }
 
-.mascot-profile__status,
-.mascot-profile__hint {
+.mascot-profile__status {
   color: var(--text-muted);
   font-size: 13px;
 }
@@ -125,48 +124,6 @@
 
 .mascot-profile__color.is-selected {
   border-color: var(--text);
-}
-
-.mascot-profile__advanced {
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-2);
-}
-
-.mascot-profile__advanced summary {
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.mascot-profile__advanced[open] summary {
-  margin-bottom: 8px;
-}
-
-.mascot-profile__range {
-  display: grid;
-  gap: 6px;
-  margin-top: 12px;
-  font-size: 13px;
-}
-
-.mascot-profile__range > span {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--text-muted);
-}
-
-.mascot-profile__range output {
-  color: var(--text);
-  font-weight: 700;
-}
-
-.mascot-profile__range input {
-  padding: 0;
-  accent-color: var(--accent);
 }
 
 .mascot-profile__actions {

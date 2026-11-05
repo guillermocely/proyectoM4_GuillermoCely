@@ -22,6 +22,9 @@
   --mascot-menta: #7ed7b0;
   --mascot-celeste: #7fb9e8;
   --mascot-lila: #b79be8;
+  --mascot-negro: #4a4a46;
+  --mascot-rosado: #e887ad;
+  --mascot-gris: #9b9a96;
   --danger: #e96951;
   --track: #363532;
   --panel: rgba(41, 41, 39, .97);
@@ -54,6 +57,9 @@ html[data-theme='light'] {
   --mascot-menta: #4fb88c;
   --mascot-celeste: #4b90c9;
   --mascot-lila: #8f74c9;
+  --mascot-negro: #2f2f2d;
+  --mascot-rosado: #d06f96;
+  --mascot-gris: #8f8e89;
   --danger: #cf4b34;
   --track: #e4dfd3;
   --panel: rgba(255, 255, 255, .98);

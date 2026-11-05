@@ -242,6 +242,18 @@
   --mascot: var(--mascot-lila);
 }
 
+.mascot-color-negro {
+  --mascot: var(--mascot-negro);
+}
+
+.mascot-color-rosado {
+  --mascot: var(--mascot-rosado);
+}
+
+.mascot-color-gris {
+  --mascot: var(--mascot-gris);
+}
+
 @keyframes mascot-panel-in {
   from {
     opacity: 0;

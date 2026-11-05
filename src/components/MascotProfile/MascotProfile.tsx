@@ -4,10 +4,6 @@ import {
   MASCOT_COLORS,
   MASCOT_KINDS,
   MASCOT_PERSONALITIES,
-  MASCOT_TEMPERATURE_MAX,
-  MASCOT_TEMPERATURE_MIN,
-  MASCOT_TOKENS_MAX,
-  MASCOT_TOKENS_MIN,
   type MascotSettings,
 } from '../../types/mascot';
 import type { MascotProfileProps } from './MascotProfile.types';
@@ -116,37 +112,6 @@ export default function MascotProfile({
               ))}
             </div>
           </fieldset>
-
-          <details className="mascot-profile__advanced">
-            <summary>Ajustes de inteligencia artificial</summary>
-            <p className="mascot-profile__hint">
-              La mascota responde en español, con voseo y en un máximo de 30 palabras.
-            </p>
-
-            <label className="mascot-profile__range">
-              <span>Creatividad <output>{draft.temperature.toFixed(1)}</output></span>
-              <input
-                type="range"
-                min={MASCOT_TEMPERATURE_MIN}
-                max={MASCOT_TEMPERATURE_MAX}
-                step={0.1}
-                value={draft.temperature}
-                onChange={(event) => update({ temperature: Number(event.target.value) })}
-              />
-            </label>
-
-            <label className="mascot-profile__range">
-              <span>Límite de tokens <output>{draft.maxTokens}</output></span>
-              <input
-                type="range"
-                min={MASCOT_TOKENS_MIN}
-                max={MASCOT_TOKENS_MAX}
-                step={64}
-                value={draft.maxTokens}
-                onChange={(event) => update({ maxTokens: Number(event.target.value) })}
-              />
-            </label>
-          </details>
 
           <div className="mascot-profile__actions">
             <button

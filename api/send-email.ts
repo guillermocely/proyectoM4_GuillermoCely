@@ -4,14 +4,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Datos que envía el formulario de contacto.
 type ContactBody = {
   name: unknown;
-  email: unknown;
   message: unknown;
 };
 
-// Valida el formato del correo de quien escribe.
-function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
+// Todos los comentarios del formulario llegan a este correo.
+const CONTACT_RECIPIENT = 'megaguillermo@gmail.com';
 
 // Serverless function: recibe el formulario y envía el correo con Amazon SES.
 // Las credenciales de AWS viven solo acá (variables sin prefijo VITE_).
@@ -32,19 +29,14 @@ export default async function handler(
     return;
   }
 
-  const { name, email, message } = body;
+  const { name, message } = body;
 
-  if (
-    typeof name !== 'string' ||
-    typeof email !== 'string' ||
-    typeof message !== 'string'
-  ) {
+  if (typeof name !== 'string' || typeof message !== 'string') {
     response.status(400).json({ error: 'El cuerpo de la petición es inválido' });
     return;
   }
 
   const normalizedName = name.trim();
-  const normalizedEmail = email.trim();
   const normalizedMessage = message.trim();
 
   if (normalizedName.length < 2 || normalizedName.length > 100) {
@@ -54,23 +46,17 @@ export default async function handler(
     return;
   }
 
-  if (!isValidEmail(normalizedEmail)) {
-    response.status(400).json({ error: 'El correo no es válido' });
-    return;
-  }
-
   if (normalizedMessage.length < 10 || normalizedMessage.length > 3000) {
     response.status(400).json({
-      error: 'El mensaje debe tener entre 10 y 3000 caracteres',
+      error: 'El comentario debe tener entre 10 y 3000 caracteres',
     });
     return;
   }
 
   const region = process.env.AWS_REGION?.trim();
   const from = process.env.SES_FROM_EMAIL?.trim();
-  const to = process.env.SES_TO_EMAIL?.trim();
 
-  if (!region || !from || !to) {
+  if (!region || !from) {
     console.error('Faltan variables de entorno de SES');
     response.status(500).json({
       error: 'El servidor no está configurado correctamente',
@@ -83,18 +69,16 @@ export default async function handler(
   try {
     const command = new SendEmailCommand({
       Source: from,
-      Destination: { ToAddresses: [to] },
-      ReplyToAddresses: [normalizedEmail],
+      Destination: { ToAddresses: [CONTACT_RECIPIENT] },
       Message: {
         Subject: {
-          Data: `Nuevo mensaje de ${normalizedName}`,
+          Data: `Nuevo comentario de ${normalizedName}`,
           Charset: 'UTF-8',
         },
         Body: {
           Text: {
             Data: [
               `Nombre: ${normalizedName}`,
-              `Email: ${normalizedEmail}`,
               '',
               normalizedMessage,
             ].join('\n'),
@@ -107,13 +91,13 @@ export default async function handler(
     const result = await sesClient.send(command);
 
     response.status(200).json({
-      message: 'Correo enviado correctamente',
+      message: 'Comentario enviado correctamente',
       messageId: result.MessageId,
     });
   } catch (error: unknown) {
-    console.error('Error enviando correo con SES:', error);
+    console.error('Error enviando el comentario con SES:', error);
     response.status(500).json({
-      error: 'No se pudo enviar el correo',
+      error: 'No se pudo enviar el comentario',
       detail: error instanceof Error ? error.message : String(error),
     });
   }

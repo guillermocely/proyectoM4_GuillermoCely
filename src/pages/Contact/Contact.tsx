@@ -8,8 +8,8 @@ export default function Contact() {
       <section className="contact__card">
         <h1>Contacto</h1>
         <p>
-          ¿Tenés una consulta, una sugerencia o encontraste un problema? Escribinos
-          y te respondemos por correo.
+          ¿Tienes una consulta, una sugerencia o encontraste un problema? Déjanos
+          tu nombre y tu comentario; el mensaje llega directamente al equipo de KeepUp.
         </p>
         <ContactForm />
       </section>

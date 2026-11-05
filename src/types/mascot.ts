@@ -1,5 +1,13 @@
 export type MascotKind = 'lechuza' | 'gato' | 'zorro' | 'robot';
-export type MascotColor = 'ambar' | 'coral' | 'menta' | 'celeste' | 'lila';
+export type MascotColor =
+  | 'ambar'
+  | 'coral'
+  | 'menta'
+  | 'celeste'
+  | 'lila'
+  | 'negro'
+  | 'rosado'
+  | 'gris';
 export type MascotPersonality = 'motivadora' | 'divertida' | 'seria';
 export type MascotRole = 'user' | 'assistant';
 
@@ -46,6 +54,9 @@ export const MASCOT_COLORS: MascotOption<MascotColor>[] = [
   { value: 'menta', label: 'Menta' },
   { value: 'celeste', label: 'Celeste' },
   { value: 'lila', label: 'Lila' },
+  { value: 'negro', label: 'Negro' },
+  { value: 'rosado', label: 'Rosado' },
+  { value: 'gris', label: 'Gris' },
 ];
 
 export const MASCOT_PERSONALITIES: MascotOption<MascotPersonality>[] = [

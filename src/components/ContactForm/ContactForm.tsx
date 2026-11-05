@@ -10,7 +10,6 @@ type ApiResponse = {
 
 const INITIAL_VALUES = {
   name: '',
-  email: '',
   message: '',
 };
 
@@ -94,25 +93,13 @@ export default function ContactForm() {
       </div>
 
       <div className="contact-form__field">
-        <label htmlFor="contact-email">Correo</label>
-        <input
-          id="contact-email"
-          name="email"
-          type="email"
-          value={values.email}
-          onChange={handleChange}
-          autoComplete="email"
-          required
-        />
-      </div>
-
-      <div className="contact-form__field">
-        <label htmlFor="contact-message">Mensaje</label>
+        <label htmlFor="contact-message">Comentario</label>
         <textarea
           id="contact-message"
           name="message"
           value={values.message}
           onChange={handleChange}
+          placeholder="Escribe tu consulta, sugerencia u observación..."
           minLength={10}
           maxLength={3000}
           rows={6}

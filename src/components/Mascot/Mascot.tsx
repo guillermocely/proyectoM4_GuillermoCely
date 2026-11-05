@@ -153,7 +153,7 @@ export default function Mascot({ userId, settings, tasks }: MascotProps) {
               </span>
               <div>
                 <strong>{settings.name}</strong>
-                <span>Tu mascota de KeepUp</span>
+                <span>Solo consejos; no modifica tareas</span>
               </div>
             </div>
             <div className="mascot-chat__header-actions">

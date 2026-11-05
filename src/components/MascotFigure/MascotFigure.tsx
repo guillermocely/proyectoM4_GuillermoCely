@@ -8,6 +8,9 @@ const MASCOT_COLOR_VARIABLES = {
   menta: 'var(--mascot-menta)',
   celeste: 'var(--mascot-celeste)',
   lila: 'var(--mascot-lila)',
+  negro: 'var(--mascot-negro)',
+  rosado: 'var(--mascot-rosado)',
+  gris: 'var(--mascot-gris)',
 } as const;
 
 export default function MascotFigure({

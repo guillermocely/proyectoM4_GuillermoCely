@@ -9,7 +9,7 @@ Los bocetos de interfaz están documentados en Figma para mostrar el proceso de 
 - Inicio de sesión con correo/contraseña y Google.
 - CRUD de tareas con prioridad, fecha límite, búsqueda, filtros y recurrencia mensual.
 - Perfil con avatar y tema claro/oscuro.
-- Mascota personalizable con chat seguro de Gemini.
+- Mascota personalizable con chat de Gemini que solo da recomendaciones.
 - Formulario de contacto con Amazon SES.
 - Reglas de Firestore por usuario y despliegue en Vercel.
 
@@ -164,7 +164,6 @@ AWS_REGION=us-east-2
 AWS_ACCESS_KEY_ID=tu_access_key_id
 AWS_SECRET_ACCESS_KEY=tu_secret_access_key
 SES_FROM_EMAIL=tu_correo_verificado@gmail.com
-SES_TO_EMAIL=destinatario@example.com
 
 GEMINI_API_KEY=tu_gemini_api_key
 GEMINI_MODEL=gemini-3.5-flash-lite
@@ -174,6 +173,7 @@ FIREBASE_API_KEY=tu_api_key_web_de_firebase
 - Las variables con prefijo `VITE_` las necesita Vite durante el build del frontend.
 - Las de AWS y Gemini las usan las funciones de `api/` en runtime. No llevan prefijo `VITE_` porque son secretos.
 - `FIREBASE_API_KEY` puede ser la misma `VITE_FIREBASE_API_KEY`; si no la defines, el servidor usa `VITE_FIREBASE_API_KEY`.
+- El formulario de contacto no pide correo: todos los comentarios se envían a `megaguillermo@gmail.com`.
 - Después de agregar o cambiar variables, haz un **Redeploy** para que el build y las funciones tomen los valores nuevos.
 
 ### 3. Dominios autorizados en Firebase
@@ -377,6 +377,7 @@ FIREBASE_API_KEY=tu_api_key_web_de_firebase
 
 - El navegador nunca recibe `GEMINI_API_KEY`.
 - `/api/mascot` valida el método, el mensaje, el historial, las tareas y la configuración.
+- La mascota solo da recomendaciones: no puede crear, editar, completar, mover ni eliminar tareas.
 - Envía como máximo 20 mensajes de historial y 30 tareas al modelo.
 - La respuesta se limita a 30 palabras.
 - `temperature` se limita a 0–1 y `maxTokens` a 128–1024.
@@ -398,7 +399,7 @@ Abre `/perfil`, personaliza la mascota y guarda. Luego abre `/tareas` y usa el c
 <details>
 <summary>☁️ Amazon SES (formulario de contacto)</summary>
 
-El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Vercel usa Amazon SES; el navegador nunca recibe las claves de AWS.
+El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Vercel usa Amazon SES; el navegador nunca recibe las claves de AWS. El formulario solo pide **nombre** y **comentario**, y el destinatario es fijo: `megaguillermo@gmail.com`.
 
 ### 1. Crea el usuario IAM
 
@@ -441,12 +442,11 @@ AWS_REGION=us-east-2
 AWS_ACCESS_KEY_ID=tu_access_key_id
 AWS_SECRET_ACCESS_KEY=tu_secret_access_key
 SES_FROM_EMAIL=tu_correo_verificado@gmail.com
-SES_TO_EMAIL=destinatario@example.com
 ```
 
 - Carga estas variables en **Vercel → Settings → Environment Variables** para **Production** y **Development**. Marca **Preview** si también quieres probar ahí.
 - No llevan prefijo `VITE_`: son secretos y no deben llegar al navegador.
-- El destinatario es fijo (`SES_TO_EMAIL`). El correo que escribe la persona en el formulario se usa como `Reply-To`.
+- El destinatario es fijo: `megaguillermo@gmail.com`. No se configura desde el formulario ni desde una variable de entorno.
 
 ### 5. Prueba el envío
 
@@ -460,7 +460,7 @@ Abre `/contacto`, completa el formulario y envía. `npm run dev` no ejecuta la f
 
 ### 6. Si el correo no llega
 
-- En el **sandbox de SES**, el destinatario también debe estar verificado.
+- En el **sandbox de SES**, el destinatario fijo `megaguillermo@gmail.com` también debe estar verificado.
 - Un remitente `@gmail.com` puede caer en Spam. Para producción, usa un dominio propio con SPF, DKIM y DMARC.
 - Revisa los logs de `/api/send-email` en Vercel y el estado de la identidad en SES para ver si el correo se entregó, rebotó o rechazó.
 
