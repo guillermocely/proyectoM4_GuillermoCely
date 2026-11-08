@@ -344,7 +344,8 @@ No hacen falta otros índices compuestos. Firestore agrega `__name__` automátic
 - Cada tarea se guarda en `tasks/{taskId}` con `userId`, `title`, `description`, `priority`, `dueDate`, `completed`, `repeatMonthly` y `createdAt`.
 - La consulta usa `where('userId', '==', uid)` y `orderBy('createdAt', 'desc')`.
 - La mascota guarda sus preferencias en `users/{uid}/mascot/settings` y el historial en `users/{uid}/mascotMessages/{messageId}`.
-- El avatar se guarda en el navegador con `localStorage`, bajo la clave `keepup-avatar-{uid}`. No se guarda en Firestore ni en Cloud Storage.
+- El perfil y avatar se guardan en Cloud Firestore en `users/{uid}`. Toda la persistencia de datos (tareas, perfil, avatar y mascota) reside 100% en la nube.
+- La autenticación utiliza persistencia de sesión (`browserSessionPersistence`), evitando tokens eternos o desprotegidos en `localStorage`.
 
 ### 8. Sobre la API key de Firebase
 

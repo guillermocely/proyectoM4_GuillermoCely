@@ -1,30 +1,48 @@
-// Servicio de avatares: guarda la imagen (data URL) por usuario en localStorage.
-const AVATAR_KEY_PREFIX = 'keepup-avatar-';
-const listeners = new Set<() => void>();
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
-const avatarKey = (uid: string) => `${AVATAR_KEY_PREFIX}${uid}`;
+// Servicio de avatares en la nube: almacena y sincroniza la imagen directamente en Cloud Firestore (users/{uid}).
+const USERS_COLLECTION = 'users';
 
-export function loadAvatar(uid: string): string | null {
-  return localStorage.getItem(avatarKey(uid));
+function userRef(uid: string) {
+  return doc(db, USERS_COLLECTION, uid);
 }
 
-export function saveAvatar(uid: string, dataUrl: string): void {
-  localStorage.setItem(avatarKey(uid), dataUrl);
-  emitAvatarChange();
+export async function loadAvatar(uid: string): Promise<string | null> {
+  try {
+    const snapshot = await getDoc(userRef(uid));
+    if (!snapshot.exists()) return null;
+    const data = snapshot.data();
+    return (data.avatarUrl as string) || (data.photoURL as string) || null;
+  } catch {
+    return null;
+  }
 }
 
-export function removeAvatar(uid: string): void {
-  localStorage.removeItem(avatarKey(uid));
-  emitAvatarChange();
+export async function saveAvatar(uid: string, dataUrl: string): Promise<void> {
+  await setDoc(userRef(uid), { avatarUrl: dataUrl }, { merge: true });
 }
 
-export function subscribeAvatars(listener: () => void): () => void {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
+export async function removeAvatar(uid: string): Promise<void> {
+  await setDoc(userRef(uid), { avatarUrl: null }, { merge: true });
 }
 
-function emitAvatarChange(): void {
-  listeners.forEach((listener) => listener());
+export function subscribeAvatar(
+  uid: string,
+  callback: (avatarUrl: string | null) => void,
+): () => void {
+  return onSnapshot(
+    userRef(uid),
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        callback(null);
+        return;
+      }
+      const data = snapshot.data();
+      callback((data.avatarUrl as string) || (data.photoURL as string) || null);
+    },
+    () => {
+      callback(null);
+    },
+  );
 }

@@ -4,7 +4,6 @@ import Toolbar from '../../components/Toolbar';
 import Filters from '../../components/Filters';
 import TaskList from '../../components/TaskList';
 import Toast from '../../components/Toast';
-import LegacyImport from '../../components/LegacyImport';
 import Mascot from '../../components/Mascot';
 import { useAuth } from '../../contexts';
 import { useTasks } from '../../hooks/useTasks';
@@ -28,7 +27,6 @@ export default function Tasks() {
     updateTask,
     removeTask,
     undoRemove,
-    refresh,
   } = useTasks(user?.uid ?? '');
   const { filter, setFilter, query, setQuery, sort, setSort, visibleTasks } = useTaskFilters(tasks);
 
@@ -54,7 +52,6 @@ export default function Tasks() {
     <>
       <main className="app-shell">
         <Topbar completed={completed} total={tasks.length} />
-        <LegacyImport key={user.uid} userId={user.uid} onImported={refresh} />
         <div className="progress-track" aria-label={`Progreso ${progress}%`}><div style={{ width: `${progress}%` }} /></div>
         <TaskForm onAdd={addTask} />
         {error && <p className="tasks-error" role="alert">{error}</p>}

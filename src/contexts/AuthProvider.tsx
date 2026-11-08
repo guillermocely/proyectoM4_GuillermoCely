@@ -4,8 +4,9 @@ import {
   signOut,
   type User,
 } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useEffect, useState, type ReactNode } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { AuthContext } from './authContext';
 
 // Proveedor que comparte el usuario y las acciones de sesión con toda la app.
@@ -13,11 +14,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Escucha si alguien inicia o cierra sesión.
+  // Escucha si alguien inicia o cierra sesión y sincroniza el perfil/sesión en Firestore.
   useEffect(() => {
-    return onAuthStateChanged(auth, (currentUser) => {
+    return onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+
+      if (currentUser) {
+        try {
+          const userRef = doc(db, 'users', currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          const now = new Date().toISOString();
+
+          if (!userDoc.exists()) {
+            await setDoc(userRef, {
+              uid: currentUser.uid,
+              email: currentUser.email ?? '',
+              displayName: currentUser.displayName ?? '',
+              photoURL: currentUser.photoURL ?? null,
+              createdAt: currentUser.metadata.creationTime ?? now,
+              lastLoginAt: now,
+            });
+          } else {
+            await setDoc(
+              userRef,
+              {
+                email: currentUser.email ?? '',
+                displayName: currentUser.displayName || userDoc.data()?.displayName || '',
+                lastLoginAt: now,
+              },
+              { merge: true },
+            );
+          }
+        } catch (error) {
+          console.error('Error al sincronizar la sesión del usuario en Firestore:', error);
+        }
+      }
     });
   }, []);
 
@@ -27,6 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async (): Promise<void> => {
     await signOut(auth);
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.clear();
+      } catch {
+        // ignorar
+      }
+    }
   };
 
   return (
