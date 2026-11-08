@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Topbar from '../../components/Topbar';
 import TaskForm from '../../components/TaskForm';
 import Toolbar from '../../components/Toolbar';
@@ -5,6 +6,7 @@ import Filters from '../../components/Filters';
 import TaskList from '../../components/TaskList';
 import Toast from '../../components/Toast';
 import Mascot from '../../components/Mascot';
+import SummaryModal from '../../components/SummaryModal';
 import { useAuth } from '../../contexts';
 import { useTasks } from '../../hooks/useTasks';
 import { useTaskFilters } from '../../hooks/useTaskFilters';
@@ -15,6 +17,7 @@ import './Tasks.css';
 export default function Tasks() {
   const { user } = useAuth();
   const mascot = useMascotSettings(user?.uid);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const {
     tasks,
     completed,
@@ -51,7 +54,11 @@ export default function Tasks() {
   return (
     <>
       <main className="app-shell">
-        <Topbar completed={completed} total={tasks.length} />
+        <Topbar
+          completed={completed}
+          total={tasks.length}
+          onSendSummary={() => setIsSummaryOpen(true)}
+        />
         <div className="progress-track" aria-label={`Progreso ${progress}%`}><div style={{ width: `${progress}%` }} /></div>
         <TaskForm onAdd={addTask} />
         {error && <p className="tasks-error" role="alert">{error}</p>}
@@ -64,6 +71,13 @@ export default function Tasks() {
         <TaskList tasks={visibleTasks} query={query} leaving={leaving} onUpdate={updateTask} onRemove={removeTask} />
       </main>
       <Toast visible={Boolean(deleted)} message="Tarea eliminada" actionLabel="Deshacer" onAction={undoRemove} />
+      <SummaryModal
+        open={isSummaryOpen}
+        onClose={() => setIsSummaryOpen(false)}
+        tasks={tasks}
+        userEmail={user.email ?? ''}
+        userName={user.displayName ?? undefined}
+      />
       {mascot.ready && (
         <Mascot userId={user.uid} settings={mascot.settings} tasks={tasks} />
       )}

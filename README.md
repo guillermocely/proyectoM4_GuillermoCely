@@ -2,7 +2,7 @@
 
 [Ver demo en vivo](https://proyecto-m4-guillermo-cely.vercel.app/) · [Ver bocetos de interfaz en Figma](https://www.figma.com/design/B2DkASQBGZ7SdeBgasB998/KeepUp-%E2%80%94-Bocetos-de-interfaz?node-id=0-1)
 
-KeepUp es una app de tareas con autenticación, prioridades, fechas límite y recurrencia mensual. Cada usuario ve solo sus tareas en Cloud Firestore, con perfil, tema, mascota con chat de Gemini y contacto por Amazon SES.
+KeepUp es una app de tareas con autenticación, prioridades, fechas límite y recurrencia mensual. Cada usuario ve solo sus tareas en Cloud Firestore, con perfil, tema, mascota con chat de Gemini y envío de resumen de tareas y contacto por Amazon SES.
 
 Los bocetos de interfaz están documentados en Figma para mostrar el proceso de diseño y la estructura de las pantallas.
 
@@ -10,7 +10,7 @@ Los bocetos de interfaz están documentados en Figma para mostrar el proceso de 
 - CRUD de tareas con prioridad, fecha límite, búsqueda, filtros y recurrencia mensual.
 - Perfil con avatar y tema claro/oscuro.
 - Mascota personalizable con chat de Gemini que solo da recomendaciones.
-- Formulario de contacto con Amazon SES.
+- Envío de resumen de tareas por correo electrónico y formulario de contacto con Amazon SES.
 - Reglas de Firestore por usuario y despliegue en Vercel.
 
 ## Tecnologías
@@ -398,9 +398,12 @@ Abre `/perfil`, personaliza la mascota y guarda. Luego abre `/tareas` y usa el c
 </details>
 
 <details>
-<summary>☁️ Amazon SES (formulario de contacto)</summary>
+<summary>☁️ Amazon SES (resumen de tareas y contacto)</summary>
 
-El formulario de `/contacto` llama a `POST /api/send-email`. Esa función de Vercel usa Amazon SES; el navegador nunca recibe las claves de AWS. El formulario solo pide **nombre** y **comentario**, y el destinatario es fijo: `megaguillermo@gmail.com`.
+KeepUp utiliza Amazon SES para dos funcionalidades mediante funciones serverless en Vercel (el navegador nunca recibe las claves de AWS):
+
+1. **Envío del resumen de tareas (`POST /api/send-summary`):** Desde la cabecera de `/tareas`, el botón **"✉ Enviar resumen"** permite enviar al correo del usuario (o al destinatario indicado) un reporte completo en HTML y texto plano con el progreso, tareas pendientes agrupadas por prioridad y tareas completadas.
+2. **Formulario de contacto (`POST /api/send-email`):** En `/contacto`, permite a cualquier visitante enviar consultas o sugerencias directamente al equipo de KeepUp.
 
 ### 1. Crea el usuario IAM
 
@@ -513,7 +516,8 @@ Abre `/contacto`, completa el formulario y envía. `npm run dev` no ejecuta la f
 KeepUp/
 ├─ api/
 │  ├─ mascot.ts              Función serverless del chat con Gemini
-│  └─ send-email.ts          Función serverless del formulario con SES
+│  ├─ send-email.ts          Función serverless del formulario de contacto con SES
+│  └─ send-summary.ts        Función serverless de envío de resumen de tareas con SES
 ├─ public/
 ├─ src/
 │  ├─ components/            Componentes reutilizables

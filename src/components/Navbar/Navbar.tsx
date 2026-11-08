@@ -19,7 +19,11 @@ export default function Navbar({ theme, onToggleTheme, onAbout }: NavbarProps) {
   return (
     <header className="navbar">
       <div className="navbar__inner">
-        <Link className="navbar__brand" to="/" aria-label="KeepUp, ir al inicio">
+        <Link
+          className="navbar__brand"
+          to={isAuthenticated ? '/tareas' : '/'}
+          aria-label="KeepUp, ir al inicio"
+        >
           <span className="brand">Keep<span>Up</span></span>
         </Link>
 
@@ -28,7 +32,11 @@ export default function Navbar({ theme, onToggleTheme, onAbout }: NavbarProps) {
           className={`navbar__menu${open ? ' is-open' : ''}`}
           aria-label="Navegación principal"
         >
-          <NavLink className={linkClass} to="/" end onClick={closeMenu}>Inicio</NavLink>
+          {!isAuthenticated && (
+            <NavLink className={linkClass} to="/" end onClick={closeMenu}>
+              Inicio
+            </NavLink>
+          )}
           <NavLink className={linkClass} to="/tareas" onClick={closeMenu}>Mis tareas</NavLink>
           <button
             className="navbar__link"

@@ -31,7 +31,7 @@ export default function AboutModal({ open, onClose }: AboutModalProps) {
           <li><strong>Captura rápida:</strong> título, descripción, prioridad y fecha de vencimiento.</li>
           <li><strong>Progreso visible:</strong> barra de avance y contador por estado.</li>
           <li><strong>Encuentra todo:</strong> búsqueda por texto y orden por prioridad, vencimiento o título.</li>
-          <li><strong>A tu gusto:</strong> tema claro u oscuro y datos guardados en tu navegador.</li>
+          <li><strong>A tu gusto:</strong> tema claro u oscuro y datos sincronizados con Cloud Firestore.</li>
         </ul>
         <button className="button primary" onClick={onClose}>Entendido</button>
       </div>

@@ -1,4 +1,17 @@
 /* Estilos de la cabecera del gestor */
 .topbar {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.topbar__summary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 10px;
 }

@@ -47,7 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             );
           }
         } catch (error) {
-          console.error('Error al sincronizar la sesión del usuario en Firestore:', error);
+          // Si las reglas en Firebase Console aún no fueron publicadas para /users/{userId}
+          console.warn(
+            'Nota: Si ves error de permisos en /users, publica las reglas actualizadas de firestore.rules en Firebase Console.',
+            error,
+          );
         }
       }
     });
