@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import type { Priority, Task } from '../types/task';
 import {
   addTask as createTask,
@@ -122,9 +123,16 @@ export function useTasks(userId: string) {
         const updated = await saveTask({ ...target, ...changes });
         setTasks((current) => current.map((task) => (task.id === id ? updated : task)));
       }
+      if (changes.completed !== undefined) {
+        toast.success(changes.completed ? '¡Tarea completada!' : 'Tarea reactivada.');
+      } else {
+        toast.success('Tarea actualizada.');
+      }
       setError(null);
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo actualizar la tarea.'));
+      const msg = getErrorMessage(err, 'No se pudo actualizar la tarea.');
+      setError(msg);
+      toast.error(msg);
     }
   }
 
@@ -139,9 +147,12 @@ export function useTasks(userId: string) {
         await deleteTask(task);
         setTasks((current) => current.filter((item) => item.id !== id));
         setDeleted({ task, index });
+        toast.info('Tarea eliminada.');
         setError(null);
       } catch (err) {
-        setError(getErrorMessage(err, 'No se pudo eliminar la tarea.'));
+        const msg = getErrorMessage(err, 'No se pudo eliminar la tarea.');
+        setError(msg);
+        toast.error(msg);
       } finally {
         setLeaving((current) => current.filter((item) => item !== id));
         pendingRemovals.current = pendingRemovals.current.filter((item) => item !== timer);
@@ -162,9 +173,12 @@ export function useTasks(userId: string) {
         return next;
       });
       setDeleted(null);
+      toast.success('Tarea restaurada correctamente.');
       setError(null);
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo restaurar la tarea.'));
+      const msg = getErrorMessage(err, 'No se pudo restaurar la tarea.');
+      setError(msg);
+      toast.error(msg);
     }
   }
 

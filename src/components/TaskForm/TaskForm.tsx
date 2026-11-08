@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { toast } from 'react-toastify';
 import type { Priority } from '../../types/task';
 import {
   DESCRIPTION_MAX_LENGTH,
@@ -58,12 +59,15 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
         dueDate,
         repeatMonthly && Boolean(dueDate),
       );
+      toast.success('¡Tarea creada con éxito!');
       setTitle('');
       setDescription('');
       setDueDate('');
       setRepeatMonthly(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear la tarea.');
+      const msg = err instanceof Error ? err.message : 'No se pudo crear la tarea.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -99,8 +103,15 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
             if (!event.target.value) setRepeatMonthly(false);
           }}
         />
-        <button className="button primary" disabled={submitting}>
-          {submitting ? 'Agregando…' : 'Agregar'}
+        <button className="button primary" disabled={submitting || !title.trim()}>
+          {submitting ? (
+            <>
+              <span className="spinner" aria-hidden="true" />
+              Agregando…
+            </>
+          ) : (
+            'Agregar'
+          )}
         </button>
       </div>
       {repeatDay !== null && (

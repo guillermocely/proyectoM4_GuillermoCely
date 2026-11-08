@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { toast } from 'react-toastify';
 import MascotFigure from '../MascotFigure';
 import { useAuth } from '../../contexts';
 import {
@@ -130,9 +131,11 @@ export default function Mascot({ userId, settings, tasks }: MascotProps) {
       await clearMascotMessages(userId);
       setMessages([]);
       setError(null);
+      toast.info('Historial del chat eliminado.');
     } catch (err) {
       console.error('No se pudo borrar el chat:', err);
       setError('No se pudo borrar el historial.');
+      toast.error('No se pudo borrar el historial del chat.');
     } finally {
       setThinking(false);
     }

@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import MascotProfile from '../../components/MascotProfile';
 import UserAvatar from '../../components/UserAvatar';
 import { useAuth } from '../../contexts';
@@ -29,6 +30,7 @@ export default function Profile() {
   const mascot = useMascotSettings(user?.uid);
   const [error, setError] = useState<string | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isAvatarBusy, setIsAvatarBusy] = useState(false);
 
   if (!user) return null;
 
@@ -41,17 +43,42 @@ export default function Profile() {
     if (!file) return;
 
     setError(null);
+    setIsAvatarBusy(true);
     try {
       await updateAvatar(file);
+      toast.success('¡Foto de perfil actualizada con éxito!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo cargar la imagen.');
+      const msg = err instanceof Error ? err.message : 'No se pudo cargar la imagen.';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setIsAvatarBusy(false);
+    }
+  }
+
+  async function handleResetAvatar() {
+    setIsAvatarBusy(true);
+    try {
+      await resetAvatar();
+      toast.info('Foto de perfil eliminada.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'No se pudo eliminar la imagen.';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setIsAvatarBusy(false);
     }
   }
 
   async function handleLogout() {
     setIsLeaving(true);
-    await logout();
-    navigate('/', { replace: true });
+    try {
+      await logout();
+      toast.info('Sesión cerrada correctamente.');
+      navigate('/', { replace: true });
+    } catch {
+      setIsLeaving(false);
+    }
   }
 
   return (
@@ -67,12 +94,30 @@ export default function Profile() {
           </header>
 
           <div className="profile__avatar-actions">
-            <label className="button secondary profile__upload">
-              Cambiar foto
-              <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
+            <label className={`button secondary profile__upload${isAvatarBusy ? ' disabled' : ''}`}>
+              {isAvatarBusy ? (
+                <>
+                  <span className="spinner" aria-hidden="true" />
+                  Subiendo…
+                </>
+              ) : (
+                'Cambiar foto'
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={isAvatarBusy}
+                hidden
+              />
             </label>
             {avatar && (
-              <button className="button ghost" type="button" onClick={resetAvatar}>
+              <button
+                className="button ghost"
+                type="button"
+                onClick={handleResetAvatar}
+                disabled={isAvatarBusy}
+              >
                 Quitar foto
               </button>
             )}
@@ -109,7 +154,14 @@ export default function Profile() {
               onClick={handleLogout}
               disabled={isLeaving}
             >
-              {isLeaving ? 'Cerrando sesión...' : 'Cerrar sesión'}
+              {isLeaving ? (
+                <>
+                  <span className="spinner" aria-hidden="true" />
+                  Cerrando sesión…
+                </>
+              ) : (
+                'Cerrar sesión'
+              )}
             </button>
           </footer>
         </section>

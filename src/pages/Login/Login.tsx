@@ -60,11 +60,14 @@ export default function Login() {
 
     try {
       await login(values.email, values.password);
+      toast.success('¡Sesión iniciada con éxito!');
       setValues(INITIAL_VALUES);
       setTouched(INITIAL_TOUCHED);
       setErrors(INITIAL_ERRORS);
     } catch (error) {
-      setFormError(getAuthErrorMessage(error));
+      const msg = getAuthErrorMessage(error);
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -78,7 +81,9 @@ export default function Login() {
       await signInWithPopup(auth, googleProvider);
       toast.success('¡Sesión iniciada con Google!');
     } catch (error) {
-      setFormError(getAuthErrorMessage(error));
+      const msg = getAuthErrorMessage(error);
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setIsGoogleLoading(false);
     }
@@ -131,7 +136,14 @@ export default function Login() {
             type="submit"
             disabled={isFormInvalid || isSubmitting || isGoogleLoading}
           >
-            {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+            {isSubmitting ? (
+              <>
+                <span className="spinner" aria-hidden="true" />
+                Ingresando…
+              </>
+            ) : (
+              'Ingresar'
+            )}
           </button>
           <button
             className="button secondary"
@@ -139,7 +151,14 @@ export default function Login() {
             onClick={handleGoogleSignIn}
             disabled={isGoogleLoading || isSubmitting}
           >
-            {isGoogleLoading ? 'Cargando...' : 'Ingresar con Google'}
+            {isGoogleLoading ? (
+              <>
+                <span className="spinner" aria-hidden="true" />
+                Conectando…
+              </>
+            ) : (
+              'Ingresar con Google'
+            )}
           </button>
         </div>
       </form>

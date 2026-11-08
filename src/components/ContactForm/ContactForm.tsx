@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { toast } from 'react-toastify';
 import type { ContactFormStatus } from './ContactForm.types';
 import './ContactForm.css';
 
@@ -63,15 +64,18 @@ export default function ContactForm() {
       }
 
       setStatus('success');
-      setFeedback(data.message ?? 'Mensaje enviado correctamente.');
+      const okMsg = data.message ?? '¡Mensaje enviado correctamente con Amazon SES!';
+      setFeedback(okMsg);
+      toast.success(okMsg);
       setValues(INITIAL_VALUES);
     } catch (error) {
       setStatus('error');
-      setFeedback(
+      const errorMsg =
         error instanceof Error
           ? error.message
-          : 'Ocurrió un error inesperado.',
-      );
+          : 'Ocurrió un error inesperado al enviar el mensaje.';
+      setFeedback(errorMsg);
+      toast.error(errorMsg);
     }
   }
 
@@ -108,7 +112,14 @@ export default function ContactForm() {
       </div>
 
       <button className="button primary contact-form__submit" type="submit" disabled={isSending}>
-        {isSending ? 'Enviando...' : 'Enviar mensaje'}
+        {isSending ? (
+          <>
+            <span className="spinner" aria-hidden="true" />
+            Enviando mensaje…
+          </>
+        ) : (
+          'Enviar mensaje'
+        )}
       </button>
 
       {feedback && (

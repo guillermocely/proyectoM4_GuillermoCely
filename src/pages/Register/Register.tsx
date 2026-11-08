@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { toast } from 'react-toastify';
 import AuthCard from '../../components/AuthCard';
 import { useAuth } from '../../contexts';
 import { auth } from '../../firebase';
@@ -58,11 +59,14 @@ export default function Register() {
 
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
+      toast.success('¡Cuenta creada con éxito! Bienvenido a KeepUp.');
       setValues(INITIAL_VALUES);
       setTouched(INITIAL_TOUCHED);
       setErrors(INITIAL_ERRORS);
     } catch (error) {
-      setFormError(getAuthErrorMessage(error));
+      const msg = getAuthErrorMessage(error);
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -111,7 +115,14 @@ export default function Register() {
 
         <div className="auth__actions">
           <button className="button primary" type="submit" disabled={isFormInvalid || isSubmitting}>
-            {isSubmitting ? 'Registrando...' : 'Registrarme'}
+            {isSubmitting ? (
+              <>
+                <span className="spinner" aria-hidden="true" />
+                Registrando…
+              </>
+            ) : (
+              'Registrarme'
+            )}
           </button>
         </div>
       </form>

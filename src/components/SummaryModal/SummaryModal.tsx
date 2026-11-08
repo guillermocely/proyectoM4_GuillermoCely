@@ -145,7 +145,14 @@ export default function SummaryModal({
               type="submit"
               disabled={isSending || total === 0}
             >
-              {isSending ? 'Enviando resumen...' : 'Enviar por correo'}
+              {isSending ? (
+                <>
+                  <span className="spinner" aria-hidden="true" />
+                  Enviando resumen…
+                </>
+              ) : (
+                'Enviar por correo'
+              )}
             </button>
           </div>
         </form>

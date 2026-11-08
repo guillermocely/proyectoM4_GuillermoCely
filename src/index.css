@@ -97,6 +97,24 @@ select { width: auto; }
 .button.primary { margin-left: 0; background: var(--accent); color: var(--accent-contrast); font-weight: 700; }
 .button.primary:hover { background: var(--accent-hover); }
 .button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled, .button:disabled { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+
+/* Indicador de carga (spinner) reutilizable */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* Desktop: tipografía y alineación de acciones más grandes */
 @media (min-width: 641px) {

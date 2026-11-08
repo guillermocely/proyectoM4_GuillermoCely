@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import MascotFigure from '../MascotFigure';
 import {
   MASCOT_COLORS,
@@ -28,7 +29,12 @@ export default function MascotProfile({
   async function handleSave() {
     setBusy(true);
     const ok = await onSave(draft);
-    if (ok) setDraftOverride(null);
+    if (ok) {
+      setDraftOverride(null);
+      toast.success('¡Preferencias de la mascota guardadas!');
+    } else {
+      toast.error('No se pudieron guardar las preferencias de la mascota.');
+    }
     setBusy(false);
     setSaved(ok);
   }
@@ -120,7 +126,14 @@ export default function MascotProfile({
               onClick={handleSave}
               disabled={busy}
             >
-              {busy ? 'Guardando...' : 'Guardar mascota'}
+              {busy ? (
+                <>
+                  <span className="spinner" aria-hidden="true" />
+                  Guardando…
+                </>
+              ) : (
+                'Guardar mascota'
+              )}
             </button>
             {saved && <span className="mascot-profile__saved" role="status">Guardado</span>}
           </div>
