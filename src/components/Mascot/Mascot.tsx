@@ -156,7 +156,7 @@ export default function Mascot({ userId, settings, tasks }: MascotProps) {
               </span>
               <div>
                 <strong>{settings.name}</strong>
-                <span>Solo consejos; no modifica tareas</span>
+                <span>Solo tareas de KeepUp; no las modifica</span>
               </div>
             </div>
             <div className="mascot-chat__header-actions">
