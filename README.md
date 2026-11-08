@@ -1,10 +1,12 @@
-# KeepUp
+<h1 align="center">KeepUp</h1>
 
-[Ver demo en vivo](https://proyecto-m4-guillermo-cely.vercel.app/) · [Ver bocetos de interfaz en Figma](https://www.figma.com/design/B2DkASQBGZ7SdeBgasB998/KeepUp-%E2%80%94-Bocetos-de-interfaz?node-id=0-1)
+<p align="center">
+  <img src="docs/screenshots/Demokeepup.gif" alt="Demo de KeepUp" />
+</p>
+
+[Ver demo en vivo](https://proyecto-m4-guillermo-cely.vercel.app/)
 
 KeepUp es una app de tareas con autenticación, prioridades, fechas límite y recurrencia mensual. Cada usuario ve solo sus tareas en Cloud Firestore, con perfil, tema, mascota con chat de Gemini y envío de resumen de tareas y contacto por Amazon SES.
-
-Los bocetos de interfaz están documentados en Figma para mostrar el proceso de diseño y la estructura de las pantallas.
 
 - Inicio de sesión con correo/contraseña y Google.
 - CRUD de tareas con prioridad, fecha límite, búsqueda, filtros y recurrencia mensual.
@@ -53,7 +55,7 @@ npm run dev
 
 **React no se descarga por separado.** `npm install` instala React y React DOM **19.3.1**, Vite **8.3.4** y las demás dependencias definidas en `package.json`. La documentación oficial está en [react.dev](https://react.dev/).
 
-> Si solo quieres revisar el proyecto, no necesitas instalar nada: abre el demo o los bocetos de Figma. Para ejecutarlo en local, instala Node.js 24.12+ y Git; npm viene incluido con Node. El repo incluye `.nvmrc` con `24.12.0` por si usas `nvm`. `package.json` declara `engines.node` como `>=24.12.0`.
+> Si solo quieres revisar el proyecto, no necesitas instalar nada: abre el demo. Para ejecutarlo en local, instala Node.js 24.12+ y Git; npm viene incluido con Node. El repo incluye `.nvmrc` con `24.12.0` por si usas `nvm`. `package.json` declara `engines.node` como `>=24.12.0`.
 
 </details>
 
