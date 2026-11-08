@@ -14,6 +14,25 @@ const INITIAL_VALUES = {
   message: '',
 };
 
+const NAME_MIN_LENGTH = 2;
+const NAME_MAX_LENGTH = 100;
+const MESSAGE_MIN_LENGTH = 10;
+const MESSAGE_MAX_LENGTH = 3000;
+
+// Valida en JavaScript los mismos límites que exige la serverless function.
+function validateContact(values: { name: string; message: string }): string | null {
+  const name = values.name.trim();
+  const message = values.message.trim();
+
+  if (name.length < NAME_MIN_LENGTH || name.length > NAME_MAX_LENGTH) {
+    return `El nombre debe tener entre ${NAME_MIN_LENGTH} y ${NAME_MAX_LENGTH} caracteres.`;
+  }
+  if (message.length < MESSAGE_MIN_LENGTH || message.length > MESSAGE_MAX_LENGTH) {
+    return `El comentario debe tener entre ${MESSAGE_MIN_LENGTH} y ${MESSAGE_MAX_LENGTH} caracteres.`;
+  }
+  return null;
+}
+
 // Formulario de contacto: envía los datos a la serverless function que usa SES.
 export default function ContactForm() {
   const [values, setValues] = useState(INITIAL_VALUES);
@@ -33,6 +52,15 @@ export default function ContactForm() {
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+
+    const validationError = validateContact(values);
+    if (validationError) {
+      setStatus('error');
+      setFeedback(validationError);
+      toast.error(validationError);
+      return;
+    }
+
     setStatus('loading');
     setFeedback('Enviando mensaje...');
 

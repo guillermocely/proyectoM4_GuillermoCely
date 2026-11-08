@@ -264,6 +264,12 @@ export default async function handler(
   const toEmailStr = typeof toEmail === 'string' && toEmail.trim() ? toEmail.trim() : userEmailStr;
   const userNameStr = typeof userName === 'string' ? userName.trim() : userEmailStr;
 
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (toEmailStr && !emailPattern.test(toEmailStr)) {
+    response.status(400).json({ error: 'El correo de destino no es válido' });
+    return;
+  }
+
   const region = process.env.AWS_REGION?.trim();
   const from = process.env.SES_FROM_EMAIL?.trim();
   const defaultRecipient = process.env.SES_TO_EMAIL?.trim() || from;

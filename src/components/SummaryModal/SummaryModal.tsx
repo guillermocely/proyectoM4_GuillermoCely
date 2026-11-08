@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import { sendTasksSummary } from '../../services/summaryService';
+import { validateEmail } from '../../helpers/validations';
 import type { SummaryModalProps } from './SummaryModal.types';
 import './SummaryModal.css';
 
@@ -45,8 +46,9 @@ export default function SummaryModal({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const destination = recipient.trim();
-    if (!destination) {
-      setErrorMessage('Por favor ingresa un correo de destino.');
+    const emailError = validateEmail(destination);
+    if (emailError) {
+      setErrorMessage(emailError);
       return;
     }
 
